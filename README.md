@@ -1,8 +1,13 @@
 # IT493
 Source code for IT493 Project
 ## Initial setup
+- Install Git: https://git-scm.com/book/en/v2/Getting-Started-Installing-Git
 - Install python: https://www.python.org/downloads/
-- Install MariaDB: https://mariadb.org/download/?t=mariadb&p=mariadb&r=10.10.2&os=Linux&cpu=x86_64&pkg=tar_gz&i=systemd&m=acorn
+- Clone this repository:
+```
+git clone https://github.com/jamesbeegen/azziTowing.git
+```
+
 - Install the project dependencies in a virtual environment:
 ```
 # Create the virtual environment
@@ -17,10 +22,10 @@ source /path/to/flask_env/bin/activate
 
 pip install requirements.txt
 ```
-> If ```python``` or ```pip``` are not working, try using ```python3``` or ```pip3```. If none of those work, you have to configure your PATH.
+> If ```python``` or ```pip``` are not working, try using ```python3``` or ```pip3```. If none of those work, you have to configure your PATH.  
 
-- Install Git: https://git-scm.com/book/en/v2/Getting-Started-Installing-Git
-
+  
+- Install MariaDB: https://mariadb.org/download/?t=mariadb&p=mariadb&r=10.10.2&os=Linux&cpu=x86_64&pkg=tar_gz&i=systemd&m=acorn
 ## How to work on this
 1. Create a "fork" of the repository so you have your own copy. You can do this within github
 2. You will push changes to your forked repository, not the main one.
