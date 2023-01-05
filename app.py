@@ -1,3 +1,15 @@
+"""
+IT493 Project - azziTowing
+
+Authors:
+    James Beegen
+    Shahzor Khan
+    Alex Elson
+    Maria Eid
+    Hasibur Alam
+    Samuel Berhe
+"""
+
 from flask import Flask, Response, send_from_directory, render_template
 import os
 
