@@ -88,18 +88,25 @@ The above is found both in the template file and in all of the other HTML files 
 Replace "About" with the title of the page, and replace the HTML in between ```{% block content %}``` and ```{% endblock %}```
 
 ## Running the app
-In WSL:
+First, change to the ` azziTowing ` directory:
 ```
-export FLASK_APP=app
-export FLASK_ENV=development
-python3 -m flask run
+cd azziTowing
 ```
+Then:  
+
 In Windows/CMD/Powershell:
 ```
 set FLASK_APP=app
 set FLASK_ENV=development
 python3 -m flask run
 ```
+If using WSL:
+```
+export FLASK_APP=app
+export FLASK_ENV=development
+python3 -m flask run
+```
+
 Run the above command, then open `localhost:5000` in your browser.  
 
 ## Viewing Changes made to HTML, CSS or anything else
