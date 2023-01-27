@@ -7,3 +7,41 @@
     text-decoration: none;
     color: purple
 }
+
+body {
+    margin: 0 auto !important;
+}
+
+#top {
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('../images/tow-truck2.jpg') !important;
+    background-size: cover !important;                      /* <------ */
+    background-repeat: no-repeat !important;
+    background-position: center center !important;
+    height: 780px !important;
+    color: aliceblue;
+}
+
+#about-us {
+    background-color: #474E68 !important;
+    color: aliceblue;
+}
+
+#services {
+    background-color: #282A3A !important;
+    color: aliceblue;
+}
+
+#service-areas {
+    background-color: purple !important;
+    color: aliceblue;
+}
+
+.bg-primary {
+    background-color: #16213E !important;
+}
+
+.footer {
+    background-color: #16213E !important;
+    color: aliceblue !important;
+    height: 400px !important;
+}

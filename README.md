@@ -5,7 +5,6 @@ This is built using Flask, a python framework for web development.
 ## Table of Contents
 - [Initial setup](#initial-setup)
 - [How to work on this](#how-to-work-on-this)
-- [How HTML works with Flask](#how-html-works-with-flask)
 - [Running the app](#running-the-app)
 - [View changes to HTML, CSS, etc](#viewing-changes-made-to-html-css-or-anything-else)
 - [Updating the repository](#updating-the-repository)
@@ -71,21 +70,6 @@ This is built using Flask, a python framework for web development.
       ```
       I have to grant access to the repository first before you can push changes, but your changes should be visible in the ` dev ` branch after this. 
 5. That's it
-## How HTML works with Flask
-Flask uses a templating engine called ```Jinja2```. The benefit of a templating engine is that rewriting HTML for each page is lessened. There is a "template" named ```base.html``` in the ```templates``` folder. This template acts as the base HTML for any page, which includes a header, footer, and navigation bar. You will see in each individual HTML file other than ```base.html```, there is a line that says
-```
-{% extends "base.html" %}
-```
-This line tells the Jinja engine to render all of the HTML from the base template. You will also notice lines like:
-```
-{% block content %}{% endblock %}
-```
-The above is found both in the template file and in all of the other HTML files in the ```templates``` folder. This tells the Jinja engine to render HTML found within this block in individual HTML files where the same line is written in the template.  
-  
-  Any new HTML file will need the following in order to work:
-  ![image](https://user-images.githubusercontent.com/77640214/209731462-090f23dc-d09e-4204-84c4-e5e7ccf22249.png)
-  
-Replace "About" with the title of the page, and replace the HTML in between ```{% block content %}``` and ```{% endblock %}```
 
 ## Running the app
 First, change to the ` azziTowing ` directory:
