@@ -22,14 +22,6 @@ app = Flask(__name__,
 def main_view():
     return render_template('index.html')
 
-@app.route('/about')
-def about_view():
-    return render_template('about.html')
-
-@app.route('/services')
-def services_view():
-    return render_template('services.html')
-
-@app.route('/service-areas')
-def service_areas_view():
-    return render_template('service-areas.html')
+@app.route('/schedule')
+def schedule_view():
+    return render_template('index.html')
