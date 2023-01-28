@@ -13,12 +13,16 @@ body {
 }
 
 #top {
-    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('../images/tow-truck2.jpg') !important;
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('../images/tow-truck2.jpg') !important;
     background-size: cover !important;                      /* <------ */
     background-repeat: no-repeat !important;
     background-position: center center !important;
     height: 780px !important;
     color: aliceblue;
+}
+
+.schedule-button {
+    padding-top: 75px !important;
 }
 
 #about-us {
