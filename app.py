@@ -8,6 +8,7 @@ Authors:
     Maria Eid
     Hasibur Alam
     Samuel Berhe
+    Mehedi Fahad
 """
 
 from flask import Flask, Response, send_from_directory, render_template
