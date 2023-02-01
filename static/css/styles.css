@@ -25,6 +25,15 @@ body {
     padding-top: 75px !important;
 }
 
+ul li{
+	list-style-position: inside !important;
+}
+
+.list-main {
+    font-family: 'Urbanist' !important;
+    font-size: 40px !important;
+}
+
 #about-us {
     background-color: #474E68 !important;
     color: aliceblue;
