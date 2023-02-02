@@ -77,18 +77,8 @@ First, change to the ` azziTowing ` directory:
 cd azziTowing
 ```
 Then:  
-
-In Windows/CMD/Powershell:
 ```
-set FLASK_APP=app
-set FLASK_ENV=development
-python3 -m flask run
-```
-If using WSL:
-```
-export FLASK_APP=app
-export FLASK_ENV=development
-python3 -m flask run
+python3 app.py
 ```
 
 Run the above command, then open `localhost:5000` in your browser.  
