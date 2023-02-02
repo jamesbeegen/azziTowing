@@ -96,7 +96,7 @@ Run the above command, then open `localhost:5000` in your browser.
 ## Viewing Changes made to HTML, CSS or anything else
 To view changes, you will have to quit out of the development server in your terminal with ` Ctrl ` + ` C `, save your changes, and then start the development server again with:
 ```
-python3 -m flask run
+python3 app.py
 ```
 You can just hit the up arrow in the terminal to enter in the last command that was run.  
 

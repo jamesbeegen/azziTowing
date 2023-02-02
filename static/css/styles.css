@@ -25,6 +25,15 @@ body {
     padding-top: 75px !important;
 }
 
+ul li{
+	list-style-position: inside !important;
+}
+
+.list-main {
+    font-family: 'Urbanist' !important;
+    font-size: 40px !important;
+}
+
 #about-us {
     background-color: #474E68 !important;
     color: aliceblue;
@@ -49,3 +58,17 @@ body {
     color: aliceblue !important;
     height: 400px !important;
 }
+
+#schedule{
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('../images/tow-truck.jpg') !important;
+    background-size: cover !important;                      /* <------ */
+    background-repeat: no-repeat !important;
+    background-position: center center !important;
+    height: 1200px !important;
+    color: aliceblue !important;
+}
+
+.form-group {
+    max-width: 50% !important;
+}
+
