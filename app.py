@@ -11,7 +11,7 @@ Authors:
     Mehedi Fahad
 """
 
-from flask import Flask, Response, send_from_directory, render_template
+from flask import Flask, Response, send_from_directory, render_template, request, url_for, redirect
 from os import environ, remove as rm
 from os.path import join, exists
 from sqlite3 import connect
@@ -67,12 +67,19 @@ app = Flask(__name__,
 def main_view():
     return render_template('index.html')
 
-@app.route('/schedule')
+@app.route('/schedule', methods=('GET', 'POST'))
 def schedule_view():
-    with connect(DB) as conn:
-        cur = conn.cursor()
-        results = cur.execute("SELECT * FROM test").fetchall()
-    return render_template('schedule.html', results=results)
+    if request.method == "POST":
+        with connect(DB) as conn:
+            cur = conn.cursor()
+            cur.execute("INSERT INTO customer (first_name, last_name, email, phone) VALUES (?,?,?,?)", (request.form['first_name'], request.form['last_name'], request.form['email'], request.form['phone_number']))
+        return redirect(url_for('schedule_view'))
+            
+    else:
+        with connect(DB) as conn:
+            cur = conn.cursor()
+            results = cur.execute("SELECT * FROM customer").fetchall()
+        return render_template('schedule.html', results=results)
 
 if __name__ == '__main__':
     if not exists(DB):

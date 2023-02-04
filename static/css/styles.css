@@ -69,6 +69,8 @@ ul li{
 }
 
 .form-group {
-    max-width: 50% !important;
+    max-width: 75% !important;
+    min-width: 75% !important;
+    margin: 0 auto !important;
 }
 
