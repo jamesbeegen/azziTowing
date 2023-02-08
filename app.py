@@ -41,21 +41,25 @@ def create_db():
             );
             CREATE TABLE service(
                 service_id INTEGER PRIMARY KEY,
-                type TEXT NOT NULL,
+                service_type TEXT NOT NULL,
                 date DATE NOT NULL,
+                time TEXT NOT NULL,
                 completed int NOT NULL,
-                customer_id INTEGER NOT NULL,
-                FOREIGN KEY(customer_id) REFERENCES customer(customer_id)
-            );
-            CREATE TABLE service_ticket(
-                ticket_id INTEGER PRIMARY KEY,
-                amount REAL NOT NULL,
+                balance REAL,
                 paid int NOT NULL,
-                service_id INTEGER NOT NULL,
-                FOREIGN KEY(service_id) REFERENCES service(service_id)
+                customer_email INTEGER NOT NULL,
+                FOREIGN KEY(customer_email) REFERENCES customer(email)
             );
         """)
 
+def customer_exists(customer_email):
+    with connect(DB) as conn:
+        cur = conn.cursor()
+        customer = cur.execute("SELECT * FROM customer WHERE email = ?", (customer_email,)).fetchone()
+    if customer is not None:
+        return True
+    else:
+        return False
 app = Flask(__name__,
             static_url_path='',
             static_folder='static',
@@ -67,12 +71,20 @@ def main_view():
 
 @app.route('/schedule', methods=('GET', 'POST'))
 def schedule_view():
+    # If posting a web form to schedule service:
     if request.method == "POST":
         with connect(DB) as conn:
             cur = conn.cursor()
-            cur.execute("INSERT INTO customer (first_name, last_name, email, phone) VALUES (?,?,?,?)", (request.form['first_name'], request.form['last_name'], request.form['email'], request.form['phone_number']))
+
+            # Check if customer exists, create them if not
+            if not customer_exists(str(request.form['email'])):
+                cur.execute("INSERT INTO customer (first_name, last_name, email, phone) VALUES (?,?,?,?)", (request.form['first_name'], request.form['last_name'], request.form['email'], request.form['phone_number']))
+
+            # Create the service
+            cur.execute("INSERT INTO service (service_type, date, time, completed, balance, paid, customer_email) VALUES (?,?,?,?,?,?,?)", (request.form['service_type'], request.form['date'], request.form['time'], '0', '0.00', '0', request.form['email']))
+
         return redirect(url_for('schedule_view'))
-            
+
     else:
         with connect(DB) as conn:
             cur = conn.cursor()
