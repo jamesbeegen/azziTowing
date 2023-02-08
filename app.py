@@ -15,9 +15,13 @@ from flask import Flask, Response, send_from_directory, render_template, request
 from os import environ, remove as rm
 from os.path import join, exists
 from sqlite3 import connect
+import stripe
 
-
+# Name of the database file
 DB = 'database.db'
+
+# API Key for Stripe payments
+stripe_key = 'sk_test_51MZ2KAClce1MywlhOsuuW61sleJa4FX39mSt8bQbmBIGb6i2PVf4jAideajXjKTWUENOjq7jxijtWOWVwtBlDC2q00PPk1A193'
 
 
 # Set up database if it doesn't exist
@@ -29,13 +33,11 @@ def create_db():
             DROP TABLE IF EXISTS customer;
             DROP TABLE IF EXISTS service;
             DROP TABLE IF EXISTS service_ticket;
-            CREATE TABLE test (name TEXT PRIMARY KEY NOT NULL);
             CREATE TABLE customer(
-                customer_id INTEGER PRIMARY KEY, 
+                email TEXT NOT NULL PRIMARY KEY, 
                 first_name TEXT NOT NULL, 
                 last_name TEXT NOT NULL,
-                phone TEXT NOT NULL,
-                email TEXT NOT NULL
+                phone TEXT NOT NULL
             );
             CREATE TABLE service(
                 service_id INTEGER PRIMARY KEY,
@@ -53,10 +55,6 @@ def create_db():
                 FOREIGN KEY(service_id) REFERENCES service(service_id)
             );
         """)
-
-        # This is just random data to show database functionality
-        cur.execute("INSERT INTO test (name) VALUES ('testing1')")
-        cur.execute("INSERT INTO test (name) VALUES ('testing2')")
 
 app = Flask(__name__,
             static_url_path='',
@@ -80,6 +78,13 @@ def schedule_view():
             cur = conn.cursor()
             results = cur.execute("SELECT * FROM customer").fetchall()
         return render_template('schedule.html', results=results)
+
+@app.route('/joeazzi')
+def admin_view():
+    with connect(DB) as conn:
+        cur = conn.cursor()
+        customers = cur.execute("SELECT * FROM customer").fetchall()
+    return render_template('admin.html', customers=customers)
 
 if __name__ == '__main__':
     if not exists(DB):

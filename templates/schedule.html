@@ -69,16 +69,14 @@
                 <h2>Below this is dummy data to show database functionality</h2>
                 {% for result in results %}
                     <div>
-                        <p>Customer ID: {{ result[0] }}</p>
                         <p>First Name: {{ result[1] }}</p>
                         <p>Last Name: {{ result[2] }}</p>
-                        <p>Email: {{ result[4] }}</p>
+                        <p>Email: {{ result[0] }}</p>
                         <p>Phone: {{ result[3] }}</p>
                     </div>
                 {% endfor %}
             </div>
         </div>
-    </div>
 
     <div class="container-fluid text-center footer">
         <p>Footer text goes here</p>
