@@ -35,13 +35,11 @@ def create_db():
     with connect(DB) as conn:
         cur = conn.cursor()
         cur.executescript("""
-            DROP TABLE IF EXISTS test;
             DROP TABLE IF EXISTS customer;
             DROP TABLE IF EXISTS service;
-            DROP TABLE IF EXISTS service_ticket;
             CREATE TABLE customer(
-                email TEXT NOT NULL PRIMARY KEY, 
-                first_name TEXT NOT NULL, 
+                email TEXT NOT NULL PRIMARY KEY,
+                first_name TEXT NOT NULL,
                 last_name TEXT NOT NULL,
                 phone TEXT NOT NULL
             );
@@ -51,7 +49,7 @@ def create_db():
                 date DATE NOT NULL,
                 time TEXT NOT NULL,
                 completed int NOT NULL,
-                balance REAL NOT,
+                balance REAL NOT NULL,
                 paid int NOT NULL,
                 customer_email INTEGER NOT NULL,
                 FOREIGN KEY(customer_email) REFERENCES customer(email)
@@ -149,5 +147,5 @@ if __name__ == '__main__':
 
     # App configuration
     app.run(debug=1,
-            host='127.0.0.1',
+            host='0.0.0.0',
             port='5000')
