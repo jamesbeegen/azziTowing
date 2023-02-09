@@ -61,7 +61,7 @@
             <div class="row justify-content-center">
                 <div class="col-sm">
                     <label for="serviceTime" class="form-label">Service Time</label>
-                    <input type="time" class="form-control" name="time" value="{{ request.form['time'] }}:00" placeholder="{{ service[3] }}">
+                    <input type="time" class="form-control" name="time" value="{{ request.form['time'] }}" placeholder="{{ service[3] }}">
                 </div>
                 <div class="col-sm">
                     <label for="balance" class="form-label">Balance</label>
@@ -70,12 +70,12 @@
                 <div class="col-sm">
                     <label for="paid" class="form-label">Paid?</label>
                     {% if service[6] == 0 %}
-                        <select class="form-select" name="service_type" value="{{ request.form['paid'] }}">
+                        <select class="form-select" name="paid" value="{{ request.form['paid'] }}">
                             <option value="0" selected>No</option>
                             <option value="1">Yes</option>
                         </select>
                     {% else %}
-                        <select class="form-select" name="service_type" value="{{ request.form['paid'] }}">
+                        <select class="form-select" name="paid" value="{{ request.form['paid'] }}">
                             <option value="1" selected>Yes</option>
                             <option value="0">No</option>
                         </select>
@@ -87,12 +87,12 @@
                 <div class="col-sm">
                     <label for="completed" class="form-label">Service Completed?</label>
                     {% if service[4] == 0 %}
-                        <select class="form-select" name="service_type" value="{{ request.form['completed'] }}">
+                        <select class="form-select" name="completed" value="{{ request.form['completed'] }}">
                             <option value="0" selected>No</option>
                             <option value="1">Yes</option>
                         </select>
                     {% else %}
-                        <select class="form-select" name="service_type" value="{{ request.form['completed'] }}">
+                        <select class="form-select" name="completed" value="{{ request.form['completed'] }}">
                             <option value="1" selected>Yes</option>
                             <option value="0">No</option>
                         </select>
@@ -105,16 +105,22 @@
             <div class="row justify-content-center">
                 <h2>Customer Information</h2>
                 <div class="col-sm">
-                    <label for="ticketId" class="form-label">Customer Name</label>
+                    <label for="name" class="form-label">Customer Name</label>
                     <input class="form-control" placeholder="{{ service[9] }} {{ service[10]}}" disabled>
                 </div>
                 <div class="col-sm">
-                    <label for="ticketId" class="form-label">Email</label>
+                    <label for="email" class="form-label">Email</label>
                     <input class="form-control" placeholder="{{ service[7] }}" disabled>
                 </div>
                 <div class="col-sm">
-                    <label for="ticketId" class="form-label">Phone</label>
+                    <label for="phone" class="form-label">Phone</label>
                     <input class="form-control" placeholder="{{ service[11] }}" disabled>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary btn-lg mt-3">Update Ticket</button>
+                    <a class="btn btn-danger btn-lg mt-5" href="/joeazzi/service/delete?ticket={{ service[0] }}">Delete Ticket</a>
                 </div>
             </div>
         </form>

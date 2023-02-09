@@ -51,7 +51,7 @@ def create_db():
                 date DATE NOT NULL,
                 time TEXT NOT NULL,
                 completed int NOT NULL,
-                balance REAL,
+                balance REAL NOT,
                 paid int NOT NULL,
                 customer_email INTEGER NOT NULL,
                 FOREIGN KEY(customer_email) REFERENCES customer(email)
@@ -110,13 +110,35 @@ def admin_view():
 
 
 # Service ticket view
-@app.route('/joeazzi/service')
+@app.route('/joeazzi/service', methods=('GET', 'POST'))
 def service_ticket_view():
+    ticket_num = request.args.get('ticket')
+    if request.method == "POST":
+        with connect(DB) as conn:
+            cur = conn.cursor()
+            if request.form['balance'] == '':
+                balance_tuple = cur.execute("SELECT balance FROM service WHERE service_id = ?", (ticket_num,)).fetchone()
+                balance = balance_tuple[0]
+            else:
+                balance = request.form['balance']
+            cur.execute("UPDATE service SET service_type = ?, date = ?, time = ?, completed = ?, balance = ?, paid = ? WHERE service_id = ?", (request.form['service_type'], request.form['date'], request.form['time'], int(request.form['completed']), balance, int(request.form['paid']), ticket_num,))
+            return redirect('/joeazzi/service?ticket={}'.format(ticket_num))
+    else:
+        with connect(DB) as conn:
+            cur = conn.cursor()
+            service = cur.execute("SELECT * FROM service INNER JOIN customer on customer.email=service.customer_email WHERE service.service_id = ?", (ticket_num,)).fetchone()
+        return render_template('service-ticket.html', service=service)
+
+
+# Deleting a service/service ticket
+@app.route('/joeazzi/service/delete')
+def delete_service_ticket():
     ticket_num = request.args.get('ticket')
     with connect(DB) as conn:
         cur = conn.cursor()
-        service = cur.execute("SELECT * FROM service INNER JOIN customer on customer.email=service.customer_email WHERE service.service_id = ?", (ticket_num,)).fetchone()
-    return render_template('service-ticket.html', service=service)
+        cur.execute("DELETE FROM service WHERE service_id = ?", (ticket_num,))
+    return redirect('/joeazzi')
+
 
 # Main calling function
 if __name__ == '__main__':
