@@ -23,10 +23,8 @@ app = Flask(__name__,
             static_folder='static',
             template_folder='templates')
 
-
 # Name of the database file
 DB = 'database.db'
-
 
 # API Key for Stripe payments
 stripe_key = 'sk_test_51MZ2KAClce1MywlhOsuuW61sleJa4FX39mSt8bQbmBIGb6i2PVf4jAideajXjKTWUENOjq7jxijtWOWVwtBlDC2q00PPk1A193'
@@ -59,6 +57,7 @@ def create_db():
                 FOREIGN KEY(customer_email) REFERENCES customer(email)
             );
         """)
+
 
 # Check if a customer exists
 def customer_exists(customer_email):
@@ -93,7 +92,7 @@ def schedule_view():
             cur.execute("INSERT INTO service (service_type, date, time, completed, balance, paid, customer_email) VALUES (?,?,?,?,?,?,?)", (request.form['service_type'], request.form['date'], request.form['time'], '0', '0.00', '0', request.form['email']))
 
         return redirect(url_for('schedule_view'))
-    
+    # Regular GET request
     else:
         with connect(DB) as conn:
             cur = conn.cursor()
@@ -110,11 +109,23 @@ def admin_view():
     return render_template('admin.html', services=services)
 
 
+# Service ticket view
+@app.route('/joeazzi/service')
+def service_ticket_view():
+    ticket_num = request.args.get('ticket')
+    with connect(DB) as conn:
+        cur = conn.cursor()
+        service = cur.execute("SELECT * FROM service INNER JOIN customer on customer.email=service.customer_email WHERE service.service_id = ?", (ticket_num,)).fetchone()
+    return render_template('service-ticket.html', service=service)
+
 # Main calling function
 if __name__ == '__main__':
+
+    # Create the database if it doesn't exist
     if not exists(DB):
         create_db()
 
+    # App configuration
     app.run(debug=1,
             host='127.0.0.1',
             port='5000')

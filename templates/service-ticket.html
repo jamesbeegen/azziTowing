@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Azzi Towing LLC</title>
+
+    <!-- Latest compiled and minified CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+
+    <!-- Custom CSS-->
+    <link rel="stylesheet" href="css/styles.css">
+
+    <!-- Preconnect for Google Fonts-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Google Fonts below here-->
+    <link href="https://fonts.googleapis.com/css2?family=Staatliches&family=Urbanist:wght@300&display=swap" rel="stylesheet"> 
+    <!-- End of Google Fonts-->
+
+</head>
+<body>
+    <nav class="navbar sticky-top navbar-expand-md navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/#top">LOGO GOES HERE</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                    <a class="nav-link" href="/joeazzi">Schedule</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container" id="admin">
+        <form method="post">
+            <div class="row justify-content-center">
+                <h2>Ticket Information</h2>
+                <div class="col-sm">
+                    <label for="ticketId" class="form-label">Ticket ID</label>
+                    <input class="form-control" placeholder="{{ service[0] }}" disabled>
+                </div>
+                <div class="col-sm">
+                    <label for="serviceType" class="form-label">Service Type</label>
+                    <select class="form-select" name="service_type" value="{{ request.form['service_type'] }}">
+                        <option value="{{ service[1] }}" selected>{{ service[1] }}</option>
+                        <option value="Lockout Recovery">Lockout Recovery</option>
+                        <option value="Vehicle Transport/Delivery">Vehicle Transport/Delivery</option>
+                        <option value="Fuel Delivery">Fuel Delivery</option>
+                        <option value="Battery Jump">Battery Jump</option>
+                    </select>
+                </div>
+                <div class="col-sm">
+                    <label for="serviceDate" class="form-label">Service Date</label>
+                    <input type="date" class="form-control" name="date" value="{{ request.form['date'] }}" placeholder="{{ service[2] }}">
+                </div>
+            </div>
+
+            <div class="row justify-content-center">
+                <div class="col-sm">
+                    <label for="serviceTime" class="form-label">Service Time</label>
+                    <input type="time" class="form-control" name="time" value="{{ request.form['time'] }}:00" placeholder="{{ service[3] }}">
+                </div>
+                <div class="col-sm">
+                    <label for="balance" class="form-label">Balance</label>
+                    <input type="text" class="form-control" name="balance" value="{{ request.form['balance'] }}" placeholder="{{ service[5] }}">
+                </div>
+                <div class="col-sm">
+                    <label for="paid" class="form-label">Paid?</label>
+                    {% if service[6] == 0 %}
+                        <select class="form-select" name="service_type" value="{{ request.form['paid'] }}">
+                            <option value="0" selected>No</option>
+                            <option value="1">Yes</option>
+                        </select>
+                    {% else %}
+                        <select class="form-select" name="service_type" value="{{ request.form['paid'] }}">
+                            <option value="1" selected>Yes</option>
+                            <option value="0">No</option>
+                        </select>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="row justify-content-center">
+                <div class="col-sm">
+                    <label for="completed" class="form-label">Service Completed?</label>
+                    {% if service[4] == 0 %}
+                        <select class="form-select" name="service_type" value="{{ request.form['completed'] }}">
+                            <option value="0" selected>No</option>
+                            <option value="1">Yes</option>
+                        </select>
+                    {% else %}
+                        <select class="form-select" name="service_type" value="{{ request.form['completed'] }}">
+                            <option value="1" selected>Yes</option>
+                            <option value="0">No</option>
+                        </select>
+                    {% endif %}
+                </div>
+                <div class="col-sm"></div>
+                <div class="col-sm"></div>
+            </div>
+                    
+            <div class="row justify-content-center">
+                <h2>Customer Information</h2>
+                <div class="col-sm">
+                    <label for="ticketId" class="form-label">Customer Name</label>
+                    <input class="form-control" placeholder="{{ service[9] }} {{ service[10]}}" disabled>
+                </div>
+                <div class="col-sm">
+                    <label for="ticketId" class="form-label">Email</label>
+                    <input class="form-control" placeholder="{{ service[7] }}" disabled>
+                </div>
+                <div class="col-sm">
+                    <label for="ticketId" class="form-label">Phone</label>
+                    <input class="form-control" placeholder="{{ service[11] }}" disabled>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
+
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+
+</body>
+</html>
