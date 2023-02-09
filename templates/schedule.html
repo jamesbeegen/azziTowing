@@ -67,11 +67,11 @@
                         </div>
                         <div class="form-group">
                             <label for="serviceType">Service Type</label>
-                            <p><select name="service_type">
-                                <option value="{{ request.form['service_type'] }}">Lockout Recovery</option>
-                                <option value="{{ request.form['service_type'] }}">Vehicle Transport/Delivery</option>
-                                <option value="{{ request.form['service_type'] }}">Fuel Delivery</option>
-                                <option value="{{ request.form['service_type'] }}">Battery Jump</option>
+                            <p><select name="service_type" value="{{ request.form['service_type'] }}">
+                                <option value="Lockout Recovery">Lockout Recovery</option>
+                                <option value="Vehicle Transport/Delivery">Vehicle Transport/Delivery</option>
+                                <option value="Fuel Delivery">Fuel Delivery</option>
+                                <option value="Battery Jump">Battery Jump</option>
                             </select></p>
                         </div>
                         <div class="form-group">

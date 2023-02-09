@@ -17,8 +17,16 @@ from os.path import join, exists
 from sqlite3 import connect
 import stripe
 
+# App Configuration
+app = Flask(__name__,
+            static_url_path='',
+            static_folder='static',
+            template_folder='templates')
+
+
 # Name of the database file
 DB = 'database.db'
+
 
 # API Key for Stripe payments
 stripe_key = 'sk_test_51MZ2KAClce1MywlhOsuuW61sleJa4FX39mSt8bQbmBIGb6i2PVf4jAideajXjKTWUENOjq7jxijtWOWVwtBlDC2q00PPk1A193'
@@ -52,6 +60,7 @@ def create_db():
             );
         """)
 
+# Check if a customer exists
 def customer_exists(customer_email):
     with connect(DB) as conn:
         cur = conn.cursor()
@@ -60,15 +69,15 @@ def customer_exists(customer_email):
         return True
     else:
         return False
-app = Flask(__name__,
-            static_url_path='',
-            static_folder='static',
-            template_folder='templates')
 
+
+# Main view / index view
 @app.route('/')
 def main_view():
     return render_template('index.html')
 
+
+# Scheduling page / schedule form
 @app.route('/schedule', methods=('GET', 'POST'))
 def schedule_view():
     # If posting a web form to schedule service:
@@ -77,27 +86,31 @@ def schedule_view():
             cur = conn.cursor()
 
             # Check if customer exists, create them if not
-            if not customer_exists(str(request.form['email'])):
+            if not customer_exists(request.form['email']):
                 cur.execute("INSERT INTO customer (first_name, last_name, email, phone) VALUES (?,?,?,?)", (request.form['first_name'], request.form['last_name'], request.form['email'], request.form['phone_number']))
 
             # Create the service
             cur.execute("INSERT INTO service (service_type, date, time, completed, balance, paid, customer_email) VALUES (?,?,?,?,?,?,?)", (request.form['service_type'], request.form['date'], request.form['time'], '0', '0.00', '0', request.form['email']))
 
         return redirect(url_for('schedule_view'))
-
+    
     else:
         with connect(DB) as conn:
             cur = conn.cursor()
             results = cur.execute("SELECT * FROM customer").fetchall()
         return render_template('schedule.html', results=results)
 
+
+# Admin view
 @app.route('/joeazzi')
 def admin_view():
     with connect(DB) as conn:
         cur = conn.cursor()
-        customers = cur.execute("SELECT * FROM customer").fetchall()
-    return render_template('admin.html', customers=customers)
+        services = cur.execute("SELECT service_id, service_type, date, time, first_name, last_name FROM service INNER JOIN customer on customer.email=service.customer_email").fetchall()
+    return render_template('admin.html', services=services)
 
+
+# Main calling function
 if __name__ == '__main__':
     if not exists(DB):
         create_db()

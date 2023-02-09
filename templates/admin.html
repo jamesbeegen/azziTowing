@@ -44,21 +44,19 @@
                         <tr>
                             <th></th>
                             <th>Name</th>
-                            <th>Phone</th>
-                            <th>Email</th>
                             <th>Type</th>
                             <th>Date</th>
+                            <th>Time</th>
                         </tr>
                     </thead>
                     <tbody>
-                    {% for customer in customers %}
+                    {% for service in services %}
                         <tr>
-                            <td> <a class="btn btn-block btn-success mb-2" href="#">View Ticket</a>
-                            <td class="align-middle">{{ customer[1] }} {{ customer[2] }}</td>
-                            <td>{{ customer[3] }}</td>
-                            <td>{{ customer[0] }}</td>
-                            <td>{{ customer[4] }}</td>
-                            <td>{{ customer[5] }}</td>
+                            <td><a class="btn btn-block btn-success mb-2" href="#">View Ticket</a>
+                            <td>{{ service[4] }} {{ service[5] }}</td>
+                            <td>{{ service[1] }}</td>
+                            <td>{{ service[2] }}</td>
+                            <td>{{ service[3] }}</td>
                         </tr>
                     {% endfor %}
                     </tbody>
