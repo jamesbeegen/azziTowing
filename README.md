@@ -8,6 +8,7 @@ This is built using Flask, a python framework for web development.
 - [Running the app](#running-the-app)
 - [View changes to HTML, CSS, etc](#viewing-changes-made-to-html-css-or-anything-else)
 - [Updating the repository](#updating-the-repository)
+- [Docker](#Docker)
 - [Things to look out for](#things-to-look-out-for)
   
 ## Initial setup
@@ -98,6 +99,16 @@ You will need to update the repository (to get everyone else's changes) daily.
 You can do this by running:
 ```
 git pull
+```
+
+## Docker
+To build the docker image, navigate to the base directory and run
+```
+docker build -t azzi .
+```
+To run the container:
+```
+docker run --rm -p 5000:5000 -t azzi
 ```
 
 ## Things to look out for
