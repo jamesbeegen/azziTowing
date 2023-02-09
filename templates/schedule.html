@@ -1,44 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Azzi Towing LLC</title>
-
-    <!-- Latest compiled and minified CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
-
-    <!-- Custom CSS-->
-    <link rel="stylesheet" href="css/styles.css">
-
-    <!-- Preconnect for Google Fonts-->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-    <!-- Google Fonts below here-->
-    <link href="https://fonts.googleapis.com/css2?family=Staatliches&family=Urbanist:wght@300&display=swap" rel="stylesheet"> 
-    <!-- End of Google Fonts-->
-
-</head>
-<body>
-    <nav class="navbar sticky-top navbar-expand-md navbar-dark bg-primary">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="/#top">LOGO GOES HERE</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-                <div class="navbar-nav">
-                    <a class="nav-link" href="/#services">Services</a>
-                    <a class="nav-link" href="/#service-areas">Service Areas</a>
-                    <a class="nav-link" href="/#about">About us</a>
-                    <a class="nav-link" href="/#contact">Contact</a>
-                    <a class="nav-link" href="#">Schedule Service</a>
-                    <a class="nav-link" href="/joeazzi">Temp Admin Link</a>
-                </div>
-            </div>
-        </div>
-    </nav>
-
+{% extends 'base.html' %}
+{% block content %}
     <!-- First divider/area-->
     <div class="container-fluid" id="schedule">
         <div class="row align-items-center">
@@ -67,11 +28,11 @@
                         </div>
                         <div class="form-group">
                             <label for="serviceType">Service Type</label>
-                            <p><select name="service_type">
-                                <option value="{{ request.form['service_type'] }}">Lockout Recovery</option>
-                                <option value="{{ request.form['service_type'] }}">Vehicle Transport/Delivery</option>
-                                <option value="{{ request.form['service_type'] }}">Fuel Delivery</option>
-                                <option value="{{ request.form['service_type'] }}">Battery Jump</option>
+                            <p><select name="service_type" value="{{ request.form['service_type'] }}">
+                                <option value="Lockout Recovery">Lockout Recovery</option>
+                                <option value="Vehicle Transport/Delivery">Vehicle Transport/Delivery</option>
+                                <option value="Fuel Delivery">Fuel Delivery</option>
+                                <option value="Battery Jump">Battery Jump</option>
                             </select></p>
                         </div>
                         <div class="form-group">
@@ -89,18 +50,4 @@
             </div>                
         </div>
     </div>
-
-    <div class="container-fluid text-center footer">
-        <p>Footer text goes here</p>
-    </div>
-
-    <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
-
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
-
-    <!-- Latest compiled and minified JavaScript -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
-
-
-</body>
-</html>
+{% endblock %}

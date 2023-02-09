@@ -17,6 +17,12 @@ from os.path import join, exists
 from sqlite3 import connect
 import stripe
 
+# App Configuration
+app = Flask(__name__,
+            static_url_path='',
+            static_folder='static',
+            template_folder='templates')
+
 # Name of the database file
 DB = 'database.db'
 
@@ -45,13 +51,15 @@ def create_db():
                 date DATE NOT NULL,
                 time TEXT NOT NULL,
                 completed int NOT NULL,
-                balance REAL,
+                balance REAL NOT,
                 paid int NOT NULL,
                 customer_email INTEGER NOT NULL,
                 FOREIGN KEY(customer_email) REFERENCES customer(email)
             );
         """)
 
+
+# Check if a customer exists
 def customer_exists(customer_email):
     with connect(DB) as conn:
         cur = conn.cursor()
@@ -60,15 +68,15 @@ def customer_exists(customer_email):
         return True
     else:
         return False
-app = Flask(__name__,
-            static_url_path='',
-            static_folder='static',
-            template_folder='templates')
 
+
+# Main view / index view
 @app.route('/')
 def main_view():
     return render_template('index.html')
 
+
+# Scheduling page / schedule form
 @app.route('/schedule', methods=('GET', 'POST'))
 def schedule_view():
     # If posting a web form to schedule service:
@@ -77,31 +85,69 @@ def schedule_view():
             cur = conn.cursor()
 
             # Check if customer exists, create them if not
-            if not customer_exists(str(request.form['email'])):
+            if not customer_exists(request.form['email']):
                 cur.execute("INSERT INTO customer (first_name, last_name, email, phone) VALUES (?,?,?,?)", (request.form['first_name'], request.form['last_name'], request.form['email'], request.form['phone_number']))
 
             # Create the service
             cur.execute("INSERT INTO service (service_type, date, time, completed, balance, paid, customer_email) VALUES (?,?,?,?,?,?,?)", (request.form['service_type'], request.form['date'], request.form['time'], '0', '0.00', '0', request.form['email']))
 
         return redirect(url_for('schedule_view'))
-
+    # Regular GET request
     else:
         with connect(DB) as conn:
             cur = conn.cursor()
             results = cur.execute("SELECT * FROM customer").fetchall()
         return render_template('schedule.html', results=results)
 
+
+# Admin view
 @app.route('/joeazzi')
 def admin_view():
     with connect(DB) as conn:
         cur = conn.cursor()
-        customers = cur.execute("SELECT * FROM customer").fetchall()
-    return render_template('admin.html', customers=customers)
+        services = cur.execute("SELECT service_id, service_type, date, time, first_name, last_name FROM service INNER JOIN customer on customer.email=service.customer_email").fetchall()
+    return render_template('admin.html', services=services)
 
+
+# Service ticket view
+@app.route('/joeazzi/service', methods=('GET', 'POST'))
+def service_ticket_view():
+    ticket_num = request.args.get('ticket')
+    if request.method == "POST":
+        with connect(DB) as conn:
+            cur = conn.cursor()
+            if request.form['balance'] == '':
+                balance_tuple = cur.execute("SELECT balance FROM service WHERE service_id = ?", (ticket_num,)).fetchone()
+                balance = balance_tuple[0]
+            else:
+                balance = request.form['balance']
+            cur.execute("UPDATE service SET service_type = ?, date = ?, time = ?, completed = ?, balance = ?, paid = ? WHERE service_id = ?", (request.form['service_type'], request.form['date'], request.form['time'], int(request.form['completed']), balance, int(request.form['paid']), ticket_num,))
+            return redirect('/joeazzi/service?ticket={}'.format(ticket_num))
+    else:
+        with connect(DB) as conn:
+            cur = conn.cursor()
+            service = cur.execute("SELECT * FROM service INNER JOIN customer on customer.email=service.customer_email WHERE service.service_id = ?", (ticket_num,)).fetchone()
+        return render_template('service-ticket.html', service=service)
+
+
+# Deleting a service/service ticket
+@app.route('/joeazzi/service/delete')
+def delete_service_ticket():
+    ticket_num = request.args.get('ticket')
+    with connect(DB) as conn:
+        cur = conn.cursor()
+        cur.execute("DELETE FROM service WHERE service_id = ?", (ticket_num,))
+    return redirect('/joeazzi')
+
+
+# Main calling function
 if __name__ == '__main__':
+
+    # Create the database if it doesn't exist
     if not exists(DB):
         create_db()
 
+    # App configuration
     app.run(debug=1,
             host='127.0.0.1',
             port='5000')
