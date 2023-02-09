@@ -1,0 +1,6 @@
+.gitignore
+flask/
+database.db
+README.md
+__pycache__
+Dockerfile
