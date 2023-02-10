@@ -28,22 +28,24 @@
                         </div>
                         <div class="form-group">
                             <label for="serviceType">Service Type</label>
-                            <p><select name="service_type" value="{{ request.form['service_type'] }}">
+                            <select class="form-select" name="service_type" value="{{ request.form['service_type'] }}">
                                 <option value="Lockout Recovery">Lockout Recovery</option>
                                 <option value="Vehicle Transport/Delivery">Vehicle Transport/Delivery</option>
                                 <option value="Fuel Delivery">Fuel Delivery</option>
                                 <option value="Battery Jump">Battery Jump</option>
-                            </select></p>
+                            </select>
                         </div>
                         <div class="form-group">
                             <label for="date">Date of Service</label>
-                            <p><input type="date" name="date" value="{{ request.form['date'] }}" placeholder="MM/DD/YYYY"></p>
+                            <input class="form-control" type="date" name="date" value="{{ request.form['date'] }}" placeholder="MM/DD/YYYY">
                         </div>
                         <div class="form-group">
                             <label for="time">Requested Time of Service</label>
-                            <p><input type="time" name="time" value="{{ request.form['time'] }}" placeholder="MM/DD/YYYY"></p>
+                            <input class="form-control" type="time" name="time" value="{{ request.form['time'] }}" placeholder="MM/DD/YYYY">
                         </div>
-                        <p class="text-center"><button type="submit" class="btn btn-primary">Submit</button></p>
+                        <div class="row justify-content-center">
+                            <button type="submit" class="btn btn-primary mt-3 schedule-form-button">Submit</button>
+                        </div>
                     </form>  
                     <h2>Click on the "Temporary Admin Link" in the navbar to view the schedule</h2>
                 </div>  

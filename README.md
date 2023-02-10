@@ -50,28 +50,47 @@ This is built using Flask, a python framework for web development.
 > If ```python``` or ```pip``` are not working, try using ```python3``` or ```pip3```. If none of those work, you have to configure your PATH.  
 
 ## How to work on this
+### Before doing anything, always run:
+```
+git pull
+```
 1. After cloning the repository and making changes to files, view the status of your changes by running:
       ```
       git status
       ```
     while in the ```azziTowing``` directory. 
-2. You will have to "push" your changes back to this repository. First, you have to stage files to be "committed" to the repository by running:
+2. You will have to "push" your changes back to this repository. To do this, first create a a new "branch" while in the ```azziTowing``` directory:
+    ```
+    git checkout -b new-branch-name
+    ```
+    Replace ```new-branch-name``` with a semi-descriptive name.
+    
+3. Now, you have to stage files to be "committed" to the repository by running:
       ```
       git add .
       ```
       Note the period. This means to add all changes you have made to the "commit" that you will push back to the repository. 
-3. Create a "commit" that includes your changes by running:
+4. Create a "commit" that includes your changes by running:
       ```
       git commit -m "Describe the changes you made here"
       ```
       It's advised to make a commit that encompasses a single change to functionality or design, rather than one commit that encompasses several different adds of functionality, etc.
 4. Push the changes/commit to the ` dev ` branch of this repository by running:
       ```
-      git push -u origin dev
+      git push -u origin new-branch-name
       ```
-      I have to grant access to the repository first before you can push changes, but your changes should be visible in the ` dev ` branch after this. 
-5. That's it
-
+      Again, replace ```new-branch-name``` with the actual name of the branch. 
+5. Now we have to "merge" your new branch into the "dev" branch. To do this, we open a pull request from within GitHub. From the main repository page, click on "Pull requests"
+6. Then click on "New Pull Request"
+7. The base branch should be the ```dev``` branch, and the "compare" branch should be the name of your new branch you just pushed.
+8. Click on Create Pull Request
+9. Give the pull request a name and a short description, and click "Create Pull Request" again.
+10. I will make sure there aren't any merge conflicts and merge your branch into the dev branch. 
+11. **IMPORTANT**, after you have ran the ```git push ...``` command, you must switch back to the dev branch locally! Do this by running:
+      ```
+      git switch dev
+      ```
+**Always make sure you checkout to a a new branch with ```git checkout``` before running ```git add```**
 ## Running the app
 First, change to the ` azziTowing ` directory:
 ```

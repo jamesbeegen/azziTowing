@@ -73,3 +73,7 @@ ul li{
     margin: 0 auto !important;
 }
 
+.schedule-form-button {
+    max-width: 400px !important;
+}
+
