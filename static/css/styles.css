@@ -29,9 +29,18 @@ ul li{
 	list-style-position: inside !important;
 }
 
+.testing-ul{
+
+}
+
 .list-main {
     font-family: 'Urbanist' !important;
-    font-size: 40px !important;
+    font-size: 25px !important;
+    list-style-position: outside !important;
+}
+
+.service-list {
+    margin: 0 auto !important;
 }
 
 #about-us {
@@ -44,8 +53,13 @@ ul li{
     color: aliceblue;
 }
 
+.list-row{
+    margin: 0 auto !important;
+    max-width: 1000px !important;
+}
+
 #service-areas {
-    background-color: purple !important;
+    background-color: #16213E !important;
     color: aliceblue;
 }
 
