@@ -4,3 +4,6 @@ database.db
 README.md
 __pycache__
 Dockerfile
+Procfile
+wsgi.py
+runtime.txt
