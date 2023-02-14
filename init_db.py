@@ -5,14 +5,20 @@ from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 
 # Normal Connect to the azzitowing database
 def db_connect():
-    conn = connect(
+    try:
+        DATABASE_URL = os.environ['HEROKU']
+            
+    except KeyError:
+        conn = connect(
             host=os.environ.get('DATABASE_URL'),
             database="azzitowing",
             user='postgres',
             password='postgres'
-    )
-
-    return conn
+        )
+    else:
+        conn = connect(DATABASE_URL, sslmode='require')
+    finally:
+        return conn
 
 # Initializing connect to postgres default database
 def init_connect():
@@ -29,11 +35,12 @@ def init_connect():
 # Initializes the database
 def init_db():
     # Initializing connection to create azzitowing database
-    conn = init_connect()
-    conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
-    cur = conn.cursor()
-    cur.execute('CREATE DATABASE azzitowing')
-    conn.close()
+    if os.environ.get('HEROKU') != 'true':
+        conn = init_connect()
+        conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
+        cur = conn.cursor()
+        cur.execute('CREATE DATABASE azzitowing')
+        conn.close()
 
     # Creates tables within the azzitowing database
     conn = db_connect()
