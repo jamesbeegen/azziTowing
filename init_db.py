@@ -6,7 +6,7 @@ from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 # Normal Connect to the azzitowing database
 def db_connect():
     try:
-        DATABASE_URL = os.environ['HEROKU']
+        DATABASE_URL = os.environ['DATABASE_URL']
             
     except KeyError:
         conn = connect(
@@ -15,11 +15,14 @@ def db_connect():
             user='postgres',
             password='postgres'
         )
-    else:
-        conn = connect(DATABASE_URL, sslmode='require')
-    finally:
+
         return conn
 
+    else:
+        conn = connect(DATABASE_URL, sslmode='require')
+        return conn
+
+        
 # Initializing connect to postgres default database
 def init_connect():
     conn = connect(
