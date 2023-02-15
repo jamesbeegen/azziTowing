@@ -34,7 +34,7 @@ else:
     prod = False
     param_query_symbol = '?'
     
-# Name of the database file
+# Name of the local testing database file
 DB = 'database.db'
 
 # API Key for Stripe payments
@@ -77,7 +77,6 @@ def create_db():
             init_db()
             return redirect('index.html')
         
-
 
 # Check if a customer exists
 def customer_exists(customer_email):

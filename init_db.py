@@ -7,19 +7,15 @@ from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 def db_connect():
     try:
         DATABASE_URL = os.environ['DATABASE_URL']
-            
-    except KeyError:
+        conn = connect(DATABASE_URL, sslmode='require')
+    except Exception:
         conn = connect(
-            host=os.environ.get('DATABASE_URL'),
+            host=os.environ['DATABASE_URL'],
             database="azzitowing",
             user='postgres',
             password='postgres'
         )
-
-        return conn
-
-    else:
-        conn = connect(DATABASE_URL, sslmode='require')
+    finally:
         return conn
 
         
