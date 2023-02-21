@@ -170,7 +170,7 @@ def admin_view():
 
 
 # Service ticket view
-@app.route('/joeazzi/service', methods=('GET', 'POST'))
+@app.route('/service', methods=('GET', 'POST'))
 def service_ticket_view():
     ticket_num = request.args.get('ticket')
     if request.method == "POST":
@@ -203,7 +203,7 @@ def service_ticket_view():
         conn.commit()
         conn.close()
 
-        return redirect('/joeazzi/service?ticket={}'.format(ticket_num))
+        return redirect('/service?ticket={}'.format(ticket_num))
     else:
         if not prod:
             conn = connect(DB)
