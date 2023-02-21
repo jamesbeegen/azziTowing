@@ -1,0 +1,30 @@
+.header {
+    text-decoration: none;
+    color: purple
+}
+
+.header:hover {
+    text-decoration: none;
+    color: purple
+}
+
+.navbar {
+    box-shadow: 0 2px 4px 0 rgba(0,0,0,.5) !important;
+}
+
+body {
+    margin: 0 auto !important;
+    background: #1e2e57 !important;
+}
+
+.bg-primary {
+    background-color: #16213E !important;
+}
+
+.form-group {
+    margin-top: 15px !important;
+}
+
+label, h1, h2{
+    color: white !important;
+}

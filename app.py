@@ -17,7 +17,6 @@ from os import environ
 from os.path import exists
 from sqlite3 import connect
 from init_db import init_db, db_connect
-import psycopg2
 import stripe
 import datetime
 
@@ -236,6 +235,99 @@ def delete_service_ticket():
     conn.close()
 
     return redirect('/joeazzi')
+
+@app.route('/joeazzi/create-service', methods=('GET', 'POST'))
+def create_service_ticket_view():
+    if request.method == 'POST':
+        if not prod:
+            conn = connect(DB)
+            
+        else:
+            conn = db_connect()
+
+        cur = conn.cursor()
+
+        # Check if customer exists, create them if not
+        if not customer_exists(request.form['email']):
+            cur.execute("INSERT INTO customer (first_name, last_name, email, phone) VALUES ({0},{0},{0},{0})".format(param_query_symbol), (request.form['first_name'], request.form['last_name'], request.form['email'], request.form['phone_number']))
+
+        # Create the service
+        cur.execute("INSERT INTO service (service_type, date, time, completed, balance, paid, customer_email) VALUES ({0},{0},{0},{0},{0},{0},{0})".format(param_query_symbol), (request.form['service_type'], request.form['date'], request.form['time'], '0', '0.00', '0', request.form['email']))
+        
+        conn.commit()
+        conn.close()
+
+        return redirect(url_for('admin_view'))
+    else:
+        return render_template('create-service.html')
+
+@app.route('/joeazzi/customers', methods=('GET', 'POST'))
+def customers_view():
+    if not prod:
+        conn = connect(DB)
+        
+    else:
+        conn = db_connect()
+
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM customer")
+
+    customers = cur.fetchall()
+
+    conn.commit()
+    conn.close()
+
+    return render_template('customers.html', customers=customers)
+
+@app.route('/joeazzi/customers/record', methods=('GET', 'POST'))
+def customer_record_view():
+    customer_id = request.args.get('customer')
+    if request.method == 'POST':
+        if not prod:
+            conn = connect(DB)
+            
+        else:
+            conn = db_connect()
+
+        cur = conn.cursor()
+
+        # Check for empty values from the form
+        if request.form['first_name'] == '':
+            cur.execute("SELECT first_name FROM customer WHERE email = {0}".format(param_query_symbol), (customer_id,))
+            first_name = cur.fetchone()[0]
+        else:
+            first_name = request.form['first_name']
+        
+        # Check for empty values from the form
+        if request.form['last_name'] == '':
+            cur.execute("SELECT last_name FROM customer WHERE email = {0}".format(param_query_symbol), (customer_id,))
+            last_name = cur.fetchone()[0]
+        else:
+            last_name = request.form['last_name']
+
+        # Check for empty values from the form
+        if request.form['phone'] == '':
+            cur.execute("SELECT phone FROM customer WHERE email = {0}".format(param_query_symbol), (customer_id,))
+            phone = cur.fetchone()[0]
+        else:
+            phone = request.form['phone']
+        cur.execute("UPDATE customer SET first_name={0}, last_name={0}, phone={0} WHERE email={0}".format(param_query_symbol), (first_name, last_name, phone, customer_id,))
+        conn.commit()
+        conn.close()
+        return redirect('/joeazzi/customers/record?customer={}'.format(customer_id))
+    else:
+        if not prod:
+            conn = connect(DB)
+            
+        else:
+            conn = db_connect()
+
+        cur = conn.cursor()
+        cur.execute("SELECT email, first_name, last_name, phone FROM customer WHERE email={0}".format(param_query_symbol), (customer_id,))
+        customer = cur.fetchone()
+        conn.commit()
+        conn.close()
+        return render_template('customer-record.html', customer=customer)
 
 
 # Main calling function

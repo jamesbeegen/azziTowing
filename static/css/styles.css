@@ -8,6 +8,10 @@
     color: purple
 }
 
+.navbar {
+    box-shadow: 0 2px 4px 0 rgba(0,0,0,.5) !important;
+}
+
 body {
     margin: 0 auto !important;
 }
@@ -19,6 +23,7 @@ body {
     background-position: center center !important;
     height: 780px !important;
     color: aliceblue;
+    box-shadow: 0 2px 4px 0 rgba(0,0,0,.5) !important;
 }
 
 .schedule-button {
@@ -46,11 +51,13 @@ ul li{
 #about-us {
     background-color: #474E68 !important;
     color: aliceblue;
+    box-shadow: 0 2px 4px 0 rgba(0,0,0,.5) !important;
 }
 
 #services {
     background-color: #282A3A !important;
     color: aliceblue;
+    box-shadow: 0 2px 4px 0 rgba(0,0,0,.5) !important;
 }
 
 .list-row{
@@ -61,6 +68,7 @@ ul li{
 #service-areas {
     background-color: #16213E !important;
     color: aliceblue;
+    box-shadow: 0 2px 4px 0 rgba(0,0,0,.5) !important;
 }
 
 .bg-primary {
@@ -85,6 +93,7 @@ ul li{
 .form-group {
     max-width: 400px !important;
     margin: 0 auto !important;
+    margin-top: 20px !important;
 }
 
 .schedule-form-button {
