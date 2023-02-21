@@ -19,6 +19,7 @@ from sqlite3 import connect
 from init_db import init_db, db_connect
 import psycopg2
 import stripe
+import datetime
 
 # App Configuration
 app = Flask(__name__,
@@ -138,6 +139,7 @@ def schedule_view():
 # Admin view
 @app.route('/joeazzi')
 def admin_view():
+    today = datetime.date.today().strftime('%m-%d-%Y')
     if not prod:
         conn = connect(DB)
         
@@ -146,13 +148,25 @@ def admin_view():
 
     cur = conn.cursor()
 
-    cur.execute("SELECT service_id, service_type, date, time, first_name, last_name FROM service INNER JOIN customer on customer.email=service.customer_email")
+    cur.execute("SELECT service_id, service_type, date, time, first_name, last_name, completed, paid FROM service INNER JOIN customer on customer.email=service.customer_email")
     services = cur.fetchall()
+
+    if not prod:
+        services_list = []
+        x = 0
+        for service in services:
+            entry = []
+            for item in service:
+                entry.append(item)
+            services_list.append(entry)
+        services = services_list
+        for service in services:
+            service[2] = datetime.datetime.strptime(service[2], '%Y-%m-%d')
 
     conn.commit()
     conn.close()
 
-    return render_template('admin.html', services=services)
+    return render_template('admin.html', services=services, today=today)
 
 
 # Service ticket view
@@ -174,13 +188,13 @@ def service_ticket_view():
 
         if request.form['date'] == '':
             cur.execute('SELECT date FROM service WHERE service_id = {}'.format(ticket_num))
-            date = cur.fetchone()
+            date = cur.fetchone()[0]
+        
         else:
             date = request.form['date']
-
         if request.form['time'] == '':
             cur.execute('SELECT time FROM service WHERE service_id = {}'.format(ticket_num))
-            time = cur.fetchone()
+            time = cur.fetchone()[0]
         else:
             time = request.form['time']
 
