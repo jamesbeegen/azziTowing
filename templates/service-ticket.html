@@ -1,6 +1,6 @@
 {% extends 'base-admin.html' %}
 {% block stylesheet %}
-    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/admin-styles.css">
 {% endblock %}
 {% block content %}
     <div class="container" id="admin">
@@ -14,11 +14,11 @@
             <div class="row justify-content-center">
                 <h2>Ticket Information</h2>
                 <div class="col-sm">
-                    <label for="ticketId" class="form-label">Ticket ID</label>
+                    <label for="ticketId" class="form-label mt-2">Ticket ID</label>
                     <input class="form-control" placeholder="{{ service[0] }}" disabled>
                 </div>
                 <div class="col-sm">
-                    <label for="serviceType" class="form-label">Service Type</label>
+                    <label for="serviceType" class="form-label mt-2">Service Type</label>
                     <select class="form-select" name="service_type" value="{{ request.form['service_type'] }}">
                         <option value="{{ service[1] }}" selected>{{ service[1] }}</option>
                         <option value="Lockout Recovery">Lockout Recovery</option>
@@ -28,22 +28,22 @@
                     </select>
                 </div>
                 <div class="col-sm">
-                    <label for="serviceDate" class="form-label">Service Date</label>
+                    <label for="serviceDate" class="form-label mt-2">Service Date</label>
                     <input type="date" class="form-control" name="date" value="{{ request.form['date'] }}" placeholder="{{ service[2] }}">
                 </div>
             </div>
 
             <div class="row justify-content-center">
                 <div class="col-sm">
-                    <label for="serviceTime" class="form-label">Service Time</label>
+                    <label for="serviceTime" class="form-label mt-3">Service Time</label>
                     <input type="time" class="form-control" name="time" value="{{ request.form['time'] }}" placeholder="{{ service[3] }}">
                 </div>
                 <div class="col-sm">
-                    <label for="balance" class="form-label">Balance</label>
+                    <label for="balance" class="form-label mt-2">Balance</label>
                     <input type="text" class="form-control" name="balance" value="{{ request.form['balance'] }}" placeholder="{{ service[5] }}">
                 </div>
                 <div class="col-sm">
-                    <label for="paid" class="form-label">Paid?</label>
+                    <label for="paid" class="form-label mt-2">Paid?</label>
                     {% if service[6] == 0 %}
                         <select class="form-select" name="paid" value="{{ request.form['paid'] }}">
                             <option value="0" selected>No</option>
@@ -60,7 +60,7 @@
 
             <div class="row justify-content-center">
                 <div class="col-sm">
-                    <label for="completed" class="form-label">Service Completed?</label>
+                    <label for="completed" class="form-label mt-2">Service Completed?</label>
                     {% if service[4] == 0 %}
                         <select class="form-select" name="completed" value="{{ request.form['completed'] }}">
                             <option value="0" selected>No</option>
@@ -78,23 +78,23 @@
             </div>
                     
             <div class="row justify-content-center">
-                <h2>Customer Information</h2>
+                <h2 class="mt-4">Customer Information</h2>
                 <div class="col-sm">
-                    <label for="name" class="form-label">Customer Name</label>
+                    <label for="name" class="form-label mt-2">Customer Name</label>
                     <input class="form-control" placeholder="{{ service[9] }} {{ service[10]}}" disabled>
                 </div>
                 <div class="col-sm">
-                    <label for="email" class="form-label">Email</label>
+                    <label for="email" class="form-label mt-2">Email</label>
                     <input class="form-control" placeholder="{{ service[7] }}" disabled>
                 </div>
                 <div class="col-sm">
-                    <label for="phone" class="form-label">Phone</label>
+                    <label for="phone" class="form-label mt-2">Phone</label>
                     <input class="form-control" placeholder="{{ service[11] }}" disabled>
                 </div>
             </div>
             <div class="row justify-content-center">
                 <div class="d-grid gap-2">
-                    <button type="submit" class="btn btn-primary btn-lg mt-3" onclick="alert('Ticket Updated');">Update Ticket</button>
+                    <button type="submit" class="btn btn-primary btn-lg mt-5" onclick="alert('Ticket Updated');">Update Ticket</button>
                     <a class="btn btn-danger btn-lg mt-5" href="/joeazzi/service/delete?ticket={{ service[0] }}">Delete Ticket</a>
                 </div>
             </div>
