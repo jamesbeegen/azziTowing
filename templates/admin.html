@@ -1,4 +1,7 @@
 {% extends 'base-admin.html' %}
+{% block stylesheet %}
+<link rel="stylesheet" href="css/styles.css">
+{% endblock %}
 {% block content %}
     <div class="container" id="admin">
         <div class="row justify-content-center">
@@ -18,7 +21,7 @@
                     {% for service in services %}
                         {% if service[6] == 0 and service[2].strftime('%m-%d-%Y') < today %}
                         <tr>
-                            <td><a class="btn btn-block btn-success mb-2" href="/service?ticket={{ service[0] }}">View Ticket</a>
+                            <td><a class="btn btn-block btn-success mb-2" href="/joeazzi/service?ticket={{ service[0] }}">View Ticket</a>
                             <td>{{ service[4] }} {{ service[5] }}</td>
                             <td>{{ service[1] }}</td>
                             <td>{{ service[2].strftime('%m-%d-%Y') }}</td>
@@ -45,7 +48,7 @@
                     {% for service in services %}
                         {% if service[6] == 0 and service[2].strftime('%m-%d-%Y') == today %}
                         <tr>
-                            <td><a class="btn btn-block btn-success mb-2" href="/service?ticket={{ service[0] }}">View Ticket</a>
+                            <td><a class="btn btn-block btn-success mb-2" href="/joeazzi/service?ticket={{ service[0] }}">View Ticket</a>
                             <td>{{ service[4] }} {{ service[5] }}</td>
                             <td>{{ service[1] }}</td>
                             <td>{{ service[2].strftime('%m-%d-%Y') }}</td>
@@ -72,7 +75,7 @@
                     {% for service in services %}
                         {% if service[6] == 0 and service[2].strftime('%m-%d-%Y') > today %}
                         <tr>
-                            <td><a class="btn btn-block btn-success mb-2" href="/service?ticket={{ service[0] }}">View Ticket</a>
+                            <td><a class="btn btn-block btn-success mb-2" href="/joeazzi/service?ticket={{ service[0] }}">View Ticket</a>
                             <td>{{ service[4] }} {{ service[5] }}</td>
                             <td>{{ service[1] }}</td>
                             <td>{{ service[2].strftime('%m-%d-%Y') }}</td>
@@ -99,7 +102,7 @@
                     {% for service in services %}
                         {% if service[6] == 1 %}
                         <tr>
-                            <td><a class="btn btn-block btn-success mb-2" href="/service?ticket={{ service[0] }}">View Ticket</a>
+                            <td><a class="btn btn-block btn-success mb-2" href="/joeazzi/service?ticket={{ service[0] }}">View Ticket</a>
                             <td>{{ service[4] }} {{ service[5] }}</td>
                             <td>{{ service[1] }}</td>
                             <td>{{ service[2].strftime('%m-%d-%Y') }}</td>
