@@ -1,0 +1,35 @@
+{% extends 'base-admin.html' %}
+
+{% block stylesheet %}
+<link rel="stylesheet" href="../css/admin-styles.css">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <h1 class="text-center mt-3">Customer/Client List</h1>  
+        <div class="table-responsive mt-3">
+            <table class="table table-primary table-hover">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Name</th>
+                        <th>Phone</th>
+                        <th>Email</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for customer in customers %}
+                    <tr>
+                        <td><a class="btn btn-block btn-success mb-2" href="/joeazzi/customers/record?customer={{ customer[0] }}">View/Edit</a>
+                        <td>{{ customer[1] }} {{ customer[2] }}</td>
+                        <td>{{ customer[3] }}</td>
+                        <td>{{ customer[0] }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
