@@ -78,7 +78,8 @@ ul li{
 .footer {
     background-color: #16213E !important;
     color: aliceblue !important;
-    height: 400px !important;
+    height: 180px !important;
+    clear: both !important;
 }
 
 #schedule{
@@ -99,3 +100,51 @@ ul li{
 .schedule-form-button {
     max-width: 400px !important;
 }
+
+.nav-footer {
+    display: flex;
+    justify-content: center;
+  }
+  
+  .nav-list {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .nav-link {
+    margin: 0 10px;
+  }
+
+  .nav-link:hover{
+    color:purple;
+  }
+
+  .footer-contact-links {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+  }
+  
+  .footer-contact-list {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .footer-contact-list li {
+    margin: 0 10px;
+  }
+  
+  .footer-link {
+    color: #fff;
+    text-decoration: none;
+  }
+  
+  .footer-link:hover {
+    color:purple;
+    text-decoration: underline;
+  }
