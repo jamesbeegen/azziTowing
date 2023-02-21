@@ -1,4 +1,12 @@
 """
+
+░█████╗░███████╗███████╗██╗   ████████╗░█████╗░░██╗░░░░░░░██╗██╗███╗░░██╗░██████╗░
+██╔══██╗╚════██║╚════██║██    ╚══██╔══╝██╔══██╗░██║░░██╗░░██║██║████╗░██║██╔════╝░
+███████║░░███╔═╝░░███╔═╝██║   ░░░██║░░░██║░░██║░╚██╗████╗██╔╝██║██╔██╗██║██║░░██╗░
+██╔══██║██╔══╝░░██╔══╝░░██║   ░░░██║░░░██║░░██║░░████╔═████║░██║██║╚████║██║░░╚██╗
+██║░░██║███████╗███████╗██║   ░░░██║░░░╚█████╔╝░░╚██╔╝░╚██╔╝░██║██║░╚███║╚██████╔╝
+╚═╝░░╚═╝╚══════╝╚══════╝╚═╝   ░░░╚═╝░░░░╚════╝░░░░╚═╝░░░╚═╝░░╚═╝╚═╝░░╚══╝░╚═════╝░
+
 IT493 Project - azziTowing
 
 Authors:
@@ -9,6 +17,41 @@ Authors:
     Hasibur Alam
     Samuel Berhe
     Mehedi Fahad
+
+
+
+Important notes:
+
+We will need to use PostgreSQL locally instead of sqlite. I am using PostgreSQL on my laptop, but have added
+support for both sqlite and PostgreSQL to make it easier to develop locally. However, it's getting harder to
+support both of the environments as the app becomes more complex:
+
+The following code checks to see whether the app is in "Production" or "PostgreSQL" mode:
+          
+                if os.environ.get('DATABASE_URL') is not None:
+                    prod = True
+                    param_query_symbol = '%s'
+                else:
+                    prod = False
+                    param_query_symbol = '?'
+
+This sets a corresponding symbol that is injected into SQL queries that parameterizes the query to avoid SQL injection attacks. The symbol is different for SQLite and PostgreSQL, which is why this is needed. IF you are using PostgreSQL locally, all you need to do is set DATABASE_URL in your shell
+
+                Linux:
+                        export DATABASE_URL=127.0.0.1
+                Windows:
+                        set DATABASE_URL=127.0.0.1
+
+The __main__ function checks for "Production" mode, and calls create_db() function to create the Postgres database in local Postgres mode. created_db() references the init.db file, which has additional checks to first try to connect to the Heroku Postgres instance (which is only accessible from within the Heroku container), and fails over to the local Postgres instance. You will likely experience errors here - make sure to set up Postgres with a username of 'postgres' and a password of 'postgres', and leave the ports at the default settings.
+
+You will notice that in each function that interacts with the database, there is a snippet of code like this:
+
+                if not prod:
+                    conn = connect(DB)
+                else:
+                    conn = db_connect()
+
+The connect() function can be traced to the sqlite3 import, and the db_connect() can be traced to the init_db import below. connect() simply connects to the database.db file, and db_connect() actually connects to a postgres database - db_connect() is only run in "Production" / "Postgres" mode in which prod is set to True. It's becoming more burdensome to add this at every interaction with the database, and to have "hotfixes" for shortcomings of sqlite functionality in order to make both environments work.
 """
 
 from flask import Flask, Response, send_from_directory, render_template, request, url_for, redirect
@@ -113,7 +156,6 @@ def schedule_view():
     if request.method == "POST":
         if not prod:
             conn = connect(DB)
-            
         else:
             conn = db_connect()
 
@@ -141,15 +183,16 @@ def admin_view():
     today = datetime.date.today().strftime('%m-%d-%Y')
     if not prod:
         conn = connect(DB)
-        
     else:
         conn = db_connect()
 
     cur = conn.cursor()
 
+    # Get information about services and the customer the service is for
     cur.execute("SELECT service_id, service_type, date, time, first_name, last_name, completed, paid FROM service INNER JOIN customer on customer.email=service.customer_email")
     services = cur.fetchall()
 
+    # This is a fix for sqlite not formatting dates properly
     if not prod:
         services_list = []
         x = 0
@@ -164,31 +207,34 @@ def admin_view():
 
     conn.commit()
     conn.close()
-
     return render_template('admin.html', services=services, today=today)
 
 
 # Service ticket view
 @app.route('/joeazzi/service', methods=('GET', 'POST'))
 def service_ticket_view():
+    # Retrieves ticket number from the GET parameter in the URL
     ticket_num = request.args.get('ticket')
+
+    # Ran when the form is submitted
     if request.method == "POST":
         if not prod:
             conn = connect(DB)
         else:
             conn = db_connect()
+
         cur = conn.cursor()
+
+        # Checks for empty values on submission of form, and defaults them back to existing values
         if request.form['balance'] == '':
             cur.execute("SELECT balance FROM service WHERE service_id = {0}".format(param_query_symbol), (ticket_num,))
             balance_tuple = cur.fetchone()
             balance = balance_tuple[0]
         else:
             balance = request.form['balance']
-
         if request.form['date'] == '':
             cur.execute('SELECT date FROM service WHERE service_id = {}'.format(ticket_num))
             date = cur.fetchone()[0]
-        
         else:
             date = request.form['date']
         if request.form['time'] == '':
@@ -197,12 +243,14 @@ def service_ticket_view():
         else:
             time = request.form['time']
 
+        # Update the service entry with the data from the form
         cur.execute("UPDATE service SET service_type = {0}, date = {0}, time = {0}, completed = {0}, balance = {0}, paid = {0} WHERE service_id = {0}".format(param_query_symbol), (request.form['service_type'], date, time, int(request.form['completed']), balance, int(request.form['paid']), ticket_num,))
 
         conn.commit()
         conn.close()
-
         return redirect('/joeazzi/service?ticket={}'.format(ticket_num))
+
+    # Ran when simply navigating to the service ticket page for a specific service
     else:
         if not prod:
             conn = connect(DB)
