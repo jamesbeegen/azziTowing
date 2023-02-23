@@ -52,7 +52,7 @@ This is built using Flask, a python framework for web development.
 ## How to work on this
 ### Before doing anything, always run:
 ```
-git pull -u origin dev
+git pull origin dev
 ```
 1. After cloning the repository and making changes to files, view the status of your changes by running:
       ```
