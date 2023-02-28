@@ -65,6 +65,9 @@ def init_db():
                     balance NUMERIC(7,2) NOT NULL,
                     paid INT NOT NULL,
                     customer_email TEXT NOT NULL,
+                    notes TEXT,
+                    payment_link TEXT,
+                    checkout_session_id TEXT,
                     FOREIGN KEY(customer_email) REFERENCES customer(email)
                 );
             """)

@@ -61,6 +61,7 @@ from os.path import exists
 from sqlite3 import connect
 from init_db import init_db, db_connect
 import stripe
+from math import ceil
 import datetime
 
 # App Configuration
@@ -82,7 +83,16 @@ DB = 'database.db'
 
 # API Key for Stripe payments
 stripe_key = 'sk_test_51MZ2KAClce1MywlhOsuuW61sleJa4FX39mSt8bQbmBIGb6i2PVf4jAideajXjKTWUENOjq7jxijtWOWVwtBlDC2q00PPk1A193'
+stripe.api_key = stripe_key
 
+# Twilio variables
+account_sid = "ACadd2746c5cb537ea87c10696f1bcbb7d"
+auth_token = "714d7c4cb72f2f41805f11a7e004864b"
+twilio_number = "+18339643387"
+
+
+# Should be Joe's email - but mine for testing
+admin_email = 'jamesbeegen@gmail.com'
 
 # Set up local database if it doesn't exist
 def create_db():
@@ -107,6 +117,9 @@ def create_db():
                     balance REAL NOT NULL,
                     paid int NOT NULL,
                     customer_email INTEGER NOT NULL,
+                    notes TEXT,
+                    payment_link TEXT,
+                    checkout_session_id TEXT,
                     FOREIGN KEY(customer_email) REFERENCES customer(email)
                 );
             """)
@@ -123,15 +136,17 @@ def create_db():
 
 # Check if a customer exists
 def customer_exists(customer_email):
+    # Connect to Database
     if not prod:
         conn = connect(DB)
     else:
         conn = db_connect()
 
+    # Get customers that have matching email
     cur = conn.cursor()
-
     cur.execute("SELECT * FROM customer WHERE email = {0}".format(param_query_symbol), (customer_email,))
     
+    # Fetches only one record into a tuple
     customer = cur.fetchone()
 
     conn.commit()
@@ -165,13 +180,14 @@ def schedule_view():
         if not customer_exists(request.form['email']):
             cur.execute("INSERT INTO customer (first_name, last_name, email, phone) VALUES ({0},{0},{0},{0})".format(param_query_symbol), (request.form['first_name'], request.form['last_name'], request.form['email'], request.form['phone_number']))
 
-        # Create the service
+        # Create the service in database
         cur.execute("INSERT INTO service (service_type, date, time, completed, balance, paid, customer_email) VALUES ({0},{0},{0},{0},{0},{0},{0})".format(param_query_symbol), (request.form['service_type'], request.form['date'], request.form['time'], '0', '0.00', '0', request.form['email']))
         
         conn.commit()
         conn.close()
 
         return redirect(url_for('schedule_view'))
+
     # Regular GET request
     else:
         return render_template('schedule.html')
@@ -180,7 +196,10 @@ def schedule_view():
 # Admin view
 @app.route('/joeazzi')
 def admin_view():
+    # Get today's date
     today = datetime.date.today().strftime('%m-%d-%Y')
+
+    # Connect to database
     if not prod:
         conn = connect(DB)
     else:
@@ -195,7 +214,6 @@ def admin_view():
     # This is a fix for sqlite not formatting dates properly
     if not prod:
         services_list = []
-        x = 0
         for service in services:
             entry = []
             for item in service:
@@ -225,7 +243,7 @@ def service_ticket_view():
 
         cur = conn.cursor()
 
-        # Checks for empty values on submission of form, and defaults them back to existing values
+        # Checks for empty values on submission of form, and defaults them back to existing values if they are empty
         if request.form['balance'] == '':
             cur.execute("SELECT balance FROM service WHERE service_id = {0}".format(param_query_symbol), (ticket_num,))
             balance_tuple = cur.fetchone()
@@ -242,10 +260,15 @@ def service_ticket_view():
             time = cur.fetchone()[0]
         else:
             time = request.form['time']
+        if request.form['notes'] == '':
+            cur.execute('SELECT notes FROM service WHERE service_id = {}'.format(ticket_num))
+            notes = cur.fetchone()[0]
+        else:
+            notes = request.form['notes']
 
         # Update the service entry with the data from the form
-        cur.execute("UPDATE service SET service_type = {0}, date = {0}, time = {0}, completed = {0}, balance = {0}, paid = {0} WHERE service_id = {0}".format(param_query_symbol), (request.form['service_type'], date, time, int(request.form['completed']), balance, int(request.form['paid']), ticket_num,))
-
+        cur.execute("UPDATE service SET service_type = {0}, date = {0}, time = {0}, completed = {0}, balance = {0}, paid = {0}, notes = {0}WHERE service_id = {0}".format(param_query_symbol), (request.form['service_type'], date, time, int(request.form['completed']), balance, int(request.form['paid']), notes, ticket_num,))
+        
         conn.commit()
         conn.close()
         return redirect('/joeazzi/service?ticket={}'.format(ticket_num))
@@ -270,7 +293,10 @@ def service_ticket_view():
 # Deleting a service/service ticket
 @app.route('/joeazzi/service/delete')
 def delete_service_ticket():
+    # Gets the current ticket number
     ticket_num = request.args.get('ticket')
+
+    # Connect to database
     if not prod:
         conn = connect(DB)
     else:
@@ -284,12 +310,14 @@ def delete_service_ticket():
 
     return redirect('/joeazzi')
 
+
+# Creating a service from admin section
 @app.route('/joeazzi/create-service', methods=('GET', 'POST'))
 def create_service_ticket_view():
+    # If the form has been submitted:
     if request.method == 'POST':
         if not prod:
             conn = connect(DB)
-            
         else:
             conn = db_connect()
 
@@ -306,11 +334,16 @@ def create_service_ticket_view():
         conn.close()
 
         return redirect(url_for('admin_view'))
+
+    # Regular GET request
     else:
         return render_template('create-service.html')
 
+
+# View that lists all customers (not services, but customers)
 @app.route('/joeazzi/customers', methods=('GET', 'POST'))
 def customers_view():
+    # Connect to database
     if not prod:
         conn = connect(DB)
         
@@ -318,19 +351,25 @@ def customers_view():
         conn = db_connect()
 
     cur = conn.cursor()
-    cur.execute("SELECT * FROM customer")
 
+    # Get all customer from database
+    cur.execute("SELECT * FROM customer")
     customers = cur.fetchall()
 
     conn.commit()
     conn.close()
-
     return render_template('customers.html', customers=customers)
 
+
+# Individual customer records/info pages
 @app.route('/joeazzi/customers/record', methods=('GET', 'POST'))
 def customer_record_view():
+    # Get the current customer_id
     customer_id = request.args.get('customer')
+
+    # If a form has been submitted (to update client info)
     if request.method == 'POST':
+        # Connect to Database
         if not prod:
             conn = connect(DB)
             
@@ -359,23 +398,122 @@ def customer_record_view():
             phone = cur.fetchone()[0]
         else:
             phone = request.form['phone']
+
+        # Updates the customer record with new information submitted in form
         cur.execute("UPDATE customer SET first_name={0}, last_name={0}, phone={0} WHERE email={0}".format(param_query_symbol), (first_name, last_name, phone, customer_id,))
+
         conn.commit()
         conn.close()
         return redirect('/joeazzi/customers/record?customer={}'.format(customer_id))
+
+    # Regular GET Request
     else:
         if not prod:
             conn = connect(DB)
-            
         else:
             conn = db_connect()
 
+        # Get the customer information based on the primary key 
         cur = conn.cursor()
         cur.execute("SELECT email, first_name, last_name, phone FROM customer WHERE email={0}".format(param_query_symbol), (customer_id,))
         customer = cur.fetchone()
+
         conn.commit()
         conn.close()
         return render_template('customer-record.html', customer=customer)
+
+
+# Generates a payment link
+@app.route('/joeazzi/service/generatePaymentLink')
+def generate_payment_link():
+    # Get the current ticket number
+    ticket_num = request.args.get('ticket')
+
+    # Connect to database
+    if not prod:
+            conn = connect(DB)
+    else:
+        conn = db_connect()
+    
+    cur = conn.cursor()
+    cur.execute("SELECT service_type, balance FROM service WHERE service_id={}".format(param_query_symbol), (ticket_num,))
+    ticket_details = cur.fetchone()
+
+    # Format the balance for the stripe api
+    balance = int(ceil(ticket_details[1])) * 100
+
+    # Create stripe checkout session/url
+    checkout_session = stripe.checkout.Session.create(
+        line_items=[
+            {
+                'price_data': {
+                    'product_data': {
+                        'name': ticket_details[0],
+                    },
+                    'unit_amount': balance,
+                    'currency': 'usd',
+                },
+                'quantity': 1,
+            },
+        ],
+        payment_method_types=['card'],
+        mode='payment',
+        success_url=request.host_url + 'payment/success',
+        cancel_url=request.host_url + 'payment/cancel',
+    )
+
+    # Update service ticket with payment link
+    cur.execute("UPDATE service SET payment_link={0} WHERE service_id={0}".format(param_query_symbol), (checkout_session.url, ticket_num,))
+
+    conn.commit()
+    conn.close()
+
+    return redirect('/joeazzi/service?ticket={}'.format(ticket_num))
+
+
+# Sends payment link via text
+@app.route('/joeazzi/sendPaymentLinkText')
+def send_payment_link_text():
+    # Twilio client
+    from twilio.rest import Client
+    client = Client(account_sid, auth_token)
+
+    # Get the current ticket number
+    ticket_num = request.args.get('ticket')
+
+    # Connect to database
+    if not prod:
+            conn = connect(DB)
+    else:
+        conn = db_connect()
+    
+    # Retrieve service information
+    cur = conn.cursor()
+    cur.execute("SELECT phone, payment_link, first_name FROM service INNER JOIN customer on customer.email=service.customer_email WHERE service.service_id = {0}".format(param_query_symbol), (ticket_num,))
+    service = cur.fetchone()
+    conn.commit()
+    conn.close()
+
+    # Send the message
+    message = client.messages.create(
+    body='Hello {}, you need to buy a number before links can be sent'.format(service[2]),
+    from_=twilio_number,
+    to="+1{}".format(service[0])
+    )
+
+    return redirect('/joeazzi/service?ticket={}'.format(ticket_num))
+
+
+# Shows when payment is successful
+@app.route('/payment/success')
+def success():
+    return render_template('success.html')
+
+
+# Shown when order/payment is cancelled
+@app.route('/payment/cancel')
+def cancel():
+    return render_template('cancel.html')
 
 
 # Main calling function
