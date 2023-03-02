@@ -6,11 +6,13 @@ RUN apk update && apk upgrade && apk add --no-cache \
 
 RUN adduser flask -D
 
-WORKDIR azziTowing
-RUN chown -R flask:flask /azziTowing
+WORKDIR /home/flask/azziTowing
+RUN chown -R flask:flask /home/flask/azziTowing
+
 USER flask
 
 ENV PATH=/home/flask/.local/bin:$PATH
+ENV HOME=/home/flask/
 
 COPY . . 
 RUN pip3 install -r requirements.txt
