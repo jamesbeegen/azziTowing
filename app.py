@@ -63,6 +63,18 @@ from init_db import init_db, db_connect
 import stripe
 from math import ceil
 import datetime
+from gmail import send_payment_link_via_email
+from twilio.rest import Client
+from twilio.jwt.access_token import AccessToken
+from twilio.jwt.access_token.grants import ChatGrant
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+# This fails in production, hence the try/except
+try:
+    load_dotenv()
+except:
+    pass
 
 # App Configuration
 app = Flask(__name__,
@@ -82,17 +94,19 @@ else:
 DB = 'database.db'
 
 # API Key for Stripe payments
-stripe_key = 'sk_test_51MZ2KAClce1MywlhOsuuW61sleJa4FX39mSt8bQbmBIGb6i2PVf4jAideajXjKTWUENOjq7jxijtWOWVwtBlDC2q00PPk1A193'
+stripe_key = os.environ['stripe_key']
 stripe.api_key = stripe_key
 
 # Twilio variables
-account_sid = "ACadd2746c5cb537ea87c10696f1bcbb7d"
-auth_token = "714d7c4cb72f2f41805f11a7e004864b"
-twilio_number = "+18339643387"
-
+account_sid = os.environ['account_sid']
+auth_token = os.environ['auth_token']
+twilio_number = os.environ['twilio_number']
+twilio_api_key = os.environ['twilio_api_key']
+twilio_api_sid = os.environ['twilio_api_sid']
 
 # Should be Joe's email - but mine for testing
-admin_email = 'jamesbeegen@gmail.com'
+admin_email = os.environ['admin_email']
+
 
 # Set up local database if it doesn't exist
 def create_db():
@@ -472,10 +486,9 @@ def generate_payment_link():
 
 
 # Sends payment link via text
-@app.route('/joeazzi/sendPaymentLinkText')
-def send_payment_link_text():
+@app.route('/joeazzi/sendPaymentLink')
+def send_payment_link():
     # Twilio client
-    from twilio.rest import Client
     client = Client(account_sid, auth_token)
 
     # Get the current ticket number
@@ -489,18 +502,20 @@ def send_payment_link_text():
     
     # Retrieve service information
     cur = conn.cursor()
-    cur.execute("SELECT phone, payment_link, first_name FROM service INNER JOIN customer on customer.email=service.customer_email WHERE service.service_id = {0}".format(param_query_symbol), (ticket_num,))
+    cur.execute("SELECT phone, email, payment_link, first_name FROM service INNER JOIN customer on customer.email=service.customer_email WHERE service.service_id = {0}".format(param_query_symbol), (ticket_num,))
     service = cur.fetchone()
     conn.commit()
     conn.close()
 
     # Send the message
     message = client.messages.create(
-    body='Hello {}, you need to buy a number before links can be sent'.format(service[2]),
+    body='Hello {}, you need to buy a number before links can be sent'.format(service[3]),
     from_=twilio_number,
     to="+1{}".format(service[0])
     )
 
+    send_payment_link_via_email(admin_email, service[1], service[3], service[2])
+    
     return redirect('/joeazzi/service?ticket={}'.format(ticket_num))
 
 

@@ -7,6 +7,7 @@ from sqlite3 import connect
 import stripe
 from math import ceil
 import datetime
+from email.mime.text import MIMEText
 
 # Checks for Heroku config var, sets to production mode if it finds DATABASE_URL is populated
 if os.environ.get('DATABASE_URL') is not None:
@@ -25,6 +26,7 @@ stripe.api_key = stripe_key
 
 # Should be Joe's email - but mine for testing
 admin_email = 'jamesbeegen@gmail.com'
+
 
 # Checks for proper payment link generation
 def proper_payment_link_generation():
@@ -69,6 +71,17 @@ def send_text():
 
     print(message.sid)
 
+def send_payment_link(link, customer_email, first_name):
+    body = """
+Hi, {}! Thanks for choosing Azzi Towing. Please use the link below to pay your invoice:
+    
+{}
+
+Thank you!
+""".format(first_name, link)
+
+
 if __name__ == '__main__':
     #proper_payment_link_generation()
-    send_text()
+    #send_text()
+    send_payment_link('http://google.com', 'jamesbeegen@gmail.com', 'James')

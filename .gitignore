@@ -2,3 +2,7 @@ __pycache__
 db.sqlite3
 database.db
 flask/
+.env
+gmail-client-secrets.json
+credentials.json
+token.json
