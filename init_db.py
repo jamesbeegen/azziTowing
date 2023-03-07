@@ -6,20 +6,19 @@ from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 # Normal Connect to the azzitowing database
 def db_connect():
     try:
-        DATABASE_URL = os.environ['HEROKU']
-            
-    except KeyError:
+        DATABASE_URL = os.environ['DATABASE_URL']
+        conn = connect(DATABASE_URL, sslmode='require')
+    except Exception:
         conn = connect(
-            host=os.environ.get('DATABASE_URL'),
+            host=os.environ['DATABASE_URL'],
             database="azzitowing",
             user='postgres',
             password='postgres'
         )
-    else:
-        conn = connect(DATABASE_URL, sslmode='require')
     finally:
         return conn
 
+        
 # Initializing connect to postgres default database
 def init_connect():
     conn = connect(
@@ -66,6 +65,9 @@ def init_db():
                     balance NUMERIC(7,2) NOT NULL,
                     paid INT NOT NULL,
                     customer_email TEXT NOT NULL,
+                    notes TEXT,
+                    payment_link TEXT,
+                    checkout_session_id TEXT,
                     FOREIGN KEY(customer_email) REFERENCES customer(email)
                 );
             """)

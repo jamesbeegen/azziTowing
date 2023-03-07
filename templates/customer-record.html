@@ -1,0 +1,45 @@
+{% extends 'base-admin.html' %}
+
+{% block stylesheet %}
+<link rel="stylesheet" href="../../css/admin-styles.css">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <nav aria-label="breadcrumb" class="mt-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/joeazzi/customers">Customers</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ customer[0] }}</li>
+        </ol>
+    </nav>
+    <form method="post">
+        <div class="row justify-content-center">
+            <h2>Ticket Information</h2>
+            <div class="col-sm">
+                <label for="firstName" class="form-label mt-2">First Name</label>
+                <input type="text" class="form-control" name="first_name" value="{{ request.form['first_name'] }}" placeholder="{{ customer[1] }}">
+            </div>
+            <div class="col-sm">
+                <label for="lastName" class="form-label mt-2">Last Name</label>
+                <input type="text" class="form-control" name="last_name" value="{{ request.form['last_name'] }}"placeholder="{{ customer[2] }}" >
+            </div>
+            <div class="col-sm">
+                <label for="phone" class="form-label mt-2">Phone</label>
+                <input type="text" class="form-control" id="phoneNumber" name="phone" value="{{ request.form['phone'] }}" placeholder="{{ customer[3] }}" >
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-sm">
+                <label for="email" class="form-label mt-2">Email</label>
+                <input type="text" class="form-control" name="email" value="{{ request.form['email'] }}" placeholder="{{ customer[0] }}" disabled>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary btn-lg mt-5" onclick="alert('Customer Updated');">Update Customer Info</button>
+            </div>
+        </div>
+    </form>
+</div>
+<script src="../../js/js.js"></script>
+{% endblock %}

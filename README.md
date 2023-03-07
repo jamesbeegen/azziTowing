@@ -1,7 +1,25 @@
 # IT493
-Source code for IT493 Project  
-
-This is built using Flask, a python framework for web development.
+Source code for IT493 Project. This is built using Flask, a python framework for web development.
+# ***IMPORTANT UPDATES***
+**Going forward, you have to add the files in the [azziTowing-secrets](https://github.com/jamesbeegen/azziTowing-secrets) repository to the azziTowing folder in order to run the app. These files contain the API Keys and Access Tokens for Gmail, Stripe, and Twilio APIs. The repository is "private", so it can't be viewed by the public. This repository (the main one), is not private because we need branch protection features that are only available for free on public repositories - hence the need for a separate private repository. Heroku is already confiured with the environment variables found in the new files in the separate repository**   
+  
+  After cloning the [azziTowing-secrets](https://github.com/jamesbeegen/azziTowing-secrets) repository, from your home directory:
+```
+# Make sure you are in your home directory
+cd azziTowing-secrets && \
+cp .env ../azziTowing/ && \
+cp token.json ../azziTowing/ && \
+cp credentials.json ../azziTowing/ 
+```
+The above only works in Linux
+# ***PLEASE UPDATE DEPENDENCIES AS WELL - I'VE ADDED A LOT***
+```
+pip3 install -r requirements.txt
+```
+# ***CURRENT BREAK POINTS IN TEST ENVIRONMENT (HEROKU)***
+- We are on a Twilio trial account - it only allows to texts to send to one verified number: 5712718255 (my cell). 500 Internal Server will occur if a payment link is sent to a phone number other that
+- For testing purposes, the emails are currently coming from my gmail account for payment links
+- Payment links are long and ugly - if possible please look up how to simplify them
 ## Table of Contents
 - [Initial setup](#initial-setup)
 - [How to work on this](#how-to-work-on-this)
@@ -52,7 +70,7 @@ This is built using Flask, a python framework for web development.
 ## How to work on this
 ### Before doing anything, always run:
 ```
-git pull
+git pull origin dev
 ```
 1. After cloning the repository and making changes to files, view the status of your changes by running:
       ```

@@ -1,0 +1,50 @@
+{% extends 'base-admin.html' %}
+
+{% block stylesheet %}
+<link rel="stylesheet" href="../css/admin-styles.css">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="text-center mt-3">Create New Service</h2>
+    <form method="post" id="schedule">
+        <div class="form-group">
+            <label for="firstName">First Name</label>
+            <input type="text" class="form-control" name="first_name" value="{{ request.form['first_name'] }}" aria-describedby="emailHelp" placeholder="Enter first name">
+        </div>
+        <div class="form-group">
+            <label for="lastName">Last Name</label>
+            <input type="text" class="form-control" name="last_name" value= "{{ request.form['last_name'] }}" aria-describedby="emailHelp" placeholder="Enter last name">
+        </div>
+        <div class="form-group">
+            <label for="email">Email address</label>
+            <input type="email" class="form-control" name="email" value= "{{ request.form['email'] }}"  aria-describedby="emailHelp" placeholder="Enter email">
+        </div>
+        <div class="form-group">
+            <label for="phone">Phone number</label>
+            <input type="text" class="form-control" name="phone_number" id="phoneNumber" value= "{{ request.form['phone_number'] }}"  placeholder="Phone Number">
+        </div>
+        <div class="form-group">
+            <label for="serviceType">Service Type</label>
+            <select class="form-select" name="service_type" value="{{ request.form['service_type'] }}">
+                <option value="Lockout Recovery">Lockout Recovery</option>
+                <option value="Vehicle Transport/Delivery">Vehicle Transport/Delivery</option>
+                <option value="Fuel Delivery">Fuel Delivery</option>
+                <option value="Battery Jump">Battery Jump</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="date">Date of Service</label>
+            <input class="form-control" type="date" name="date" value="{{ request.form['date'] }}" placeholder="MM/DD/YYYY">
+        </div>
+        <div class="form-group">
+            <label for="time">Requested Time of Service</label>
+            <input class="form-control" type="time" name="time" value="{{ request.form['time'] }}" placeholder="MM/DD/YYYY">
+        </div>
+        <div class="row justify-content-center">
+            <button type="submit" class="btn btn-primary mt-3">Create Service</button>
+        </div>
+    </form>
+</div>
+<script src="js/js.js"></script>
+{% endblock %}
