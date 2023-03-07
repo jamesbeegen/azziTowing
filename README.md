@@ -15,6 +15,10 @@ The above only works in Linux
 ```
 pip3 install -r requirements.txt
 ```
+# ***CURRENT BREAK POINTS IN TEST ENVIRONMENT (HEROKU)***
+- We are on a Twilio trial account - it only allows to texts to send to one verified number: 5712718255 (my cell). 500 Internal Server will occur if a payment link is sent to a phone number other that
+- For testing purposes, the emails are currently coming from my gmail account for payment links
+- Payment links are long and ugly - if possible please look up how to simplify them
 ## Table of Contents
 - [Initial setup](#initial-setup)
 - [How to work on this](#how-to-work-on-this)
