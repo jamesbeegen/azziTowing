@@ -1,7 +1,11 @@
 # IT493
-Source code for IT493 Project  
-
-This is built using Flask, a python framework for web development.
+Source code for IT493 Project. This is built using Flask, a python framework for web development.
+# ***IMPORTANT UPDATES***
+**Going forward, you have to add the files in the [azziTowing-secrets](https://github.com/jamesbeegen/azziTowing-secrets) repository in order to run the app. These files contain the API Keys and Access Tokens for Gmail, Stripe, and Twilio APIs. The repository is "private", so it can't be viewed by the public. This repository (the main one), is not private because we need branch protection features that are only available for free on public repositories - hence the need for a separate private repository. Heroku is already confiured with the environment variables found in the new files in the separate repository**  
+# ***PLEASE UPDATE DEPENDENCIES AS WELL - I'VE ADDED A LOT***
+```
+pip3 install -r requirements.txt
+```
 ## Table of Contents
 - [Initial setup](#initial-setup)
 - [How to work on this](#how-to-work-on-this)
