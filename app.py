@@ -53,21 +53,36 @@ You will notice that in each function that interacts with the database, there is
 
 The connect() function can be traced to the sqlite3 import, and the db_connect() can be traced to the init_db import below. connect() simply connects to the database.db file, and db_connect() actually connects to a postgres database - db_connect() is only run in "Production" / "Postgres" mode in which prod is set to True. It's becoming more burdensome to add this at every interaction with the database, and to have "hotfixes" for shortcomings of sqlite functionality in order to make both environments work.
 """
-
-from flask import Flask, Response, send_from_directory, render_template, request, url_for, redirect
 import os
-from os import environ
+import stripe
+import datetime
+import psycopg2
+from forms import login_form
+from flask import Flask, render_template, request, url_for, redirect, flash, session
 from os.path import exists
 from sqlite3 import connect
+from sqlalchemy import create_engine
 from init_db import init_db, db_connect
-import stripe
 from math import ceil
-import datetime
 from gmail import send_payment_link_via_email
 from twilio.rest import Client
 from twilio.jwt.access_token import AccessToken
 from twilio.jwt.access_token.grants import ChatGrant
 from dotenv import load_dotenv
+from flask_wtf.csrf import CSRFProtect
+from flask_sqlalchemy import SQLAlchemy
+from flask_bcrypt import Bcrypt,generate_password_hash, check_password_hash
+#from flask_migrate import Migrate
+#from flask_migrate import upgrade,migrate,init,stamp
+from flask_login import (
+    UserMixin,
+    login_user,
+    LoginManager,
+    current_user,
+    logout_user,
+    login_required,
+)
+
 
 # Load environment variables from .env file
 # This fails in production, hence the try/except
@@ -82,16 +97,72 @@ app = Flask(__name__,
             static_folder='static',
             template_folder='templates')
 
+app.secret_key = 'secret-key'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+
 # Checks for Heroku config var, sets to production mode if it finds DATABASE_URL is populated
 if os.environ.get('DATABASE_URL') is not None:
     prod = True
     param_query_symbol = '%s'
+    try:
+        db_connect()
+    except:
+        init_db()
+    if os.environ['DATABASE_URL'] == "127.0.0.1":
+        app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql+psycopg2://postgres:postgres@localhost:5432/azzitowing"
+    else:
+        app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
+ 
 else:
     prod = False
     param_query_symbol = '?'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+
+# Starts the login manager
+login_manager = LoginManager()
+login_manager.session_protection = "strong"
+login_manager.login_view = "login"
+login_manager.login_message_category = "info"
+
+# Start services for authentication
+db = SQLAlchemy()
+
+class User(UserMixin, db.Model):
+    __tablename__ = "user"
     
+    user_id = db.Column(db.Integer, primary_key = True)
+    username = db.Column(db.String(80), nullable=False, unique=True)
+    pwd = db.Column(db.String(300), nullable=False, unique=True)
+
+    def get_id(self):
+           return (self.user_id)
+
+    def __repr__(self):
+        return '<User %r>' % self.username
+
+
+#migrate_service = Migrate()
+bcrypt = Bcrypt()
+login_manager.init_app(app)
+db.init_app(app)
+#migrate_service.init_app(app, db)
+bcrypt.init_app(app)
+    
+# Enable CSRF protection
+csrf = CSRFProtect()
+csrf.init_app(app)
+
 # Name of the local testing database file
 DB = 'database.db'
+
+app.app_context().push()
+db.create_all()
+
+# migrate database to latest revision
+# init()
+# stamp()
+# migrate()
+# upgrade()
 
 # API Key for Stripe payments
 stripe_key = os.environ['stripe_key']
@@ -106,6 +177,21 @@ twilio_api_sid = os.environ['twilio_api_sid']
 
 # Should be Joe's email - but mine for testing
 admin_email = os.environ['admin_email']
+
+
+try:
+    pwd = "password"
+    username = "joeazzi"
+
+    newuser = User(
+        username=username,
+        pwd=bcrypt.generate_password_hash(pwd).decode('utf-8') ,
+    )
+
+    db.session.add(newuser)
+    db.session.commit()
+except:
+    pass
 
 
 # Set up local database if it doesn't exist
@@ -148,6 +234,8 @@ def create_db():
             return redirect('index.html')
         
 
+
+
 # Check if a customer exists
 def customer_exists(customer_email):
     # Connect to Database
@@ -172,6 +260,44 @@ def customer_exists(customer_email):
         return False
 
 
+# Manages logins
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+
+# Login route
+@app.route("/joeazzi/login/", methods=("GET", "POST"), strict_slashes=False)
+def login():
+    form = login_form()
+
+    if form.validate_on_submit():
+        try:
+            user = User.query.filter_by(username=form.username.data).first()
+            if check_password_hash(user.pwd, form.pwd.data):
+                login_user(user)
+                return redirect(url_for('admin_view'))
+            else:
+                flash("Invalid Username or password!", "danger")
+        except Exception as e:
+            flash(e, "danger")
+
+    return render_template("login.html",
+        form=form,
+        text="Login",
+        title="Login",
+        btn_action="Login"
+    )
+
+
+# Logs out user
+@app.route("/joeazzi/logout")
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('login'))
+
+
 # Main view / index view
 @app.route('/')
 def main_view():
@@ -180,6 +306,7 @@ def main_view():
 
 # Scheduling page / schedule form
 @app.route('/schedule', methods=('GET', 'POST'))
+@login_required
 def schedule_view():
     # If posting a web form to schedule service:
     if request.method == "POST":
@@ -209,6 +336,7 @@ def schedule_view():
 
 # Admin view
 @app.route('/joeazzi')
+@login_required
 def admin_view():
     # Get today's date
     today = datetime.date.today().strftime('%m-%d-%Y')
@@ -244,6 +372,7 @@ def admin_view():
 
 # Service ticket view
 @app.route('/joeazzi/service', methods=('GET', 'POST'))
+@login_required
 def service_ticket_view():
     # Retrieves ticket number from the GET parameter in the URL
     ticket_num = request.args.get('ticket')
@@ -306,6 +435,7 @@ def service_ticket_view():
 
 # Deleting a service/service ticket
 @app.route('/joeazzi/service/delete')
+@login_required
 def delete_service_ticket():
     # Gets the current ticket number
     ticket_num = request.args.get('ticket')
@@ -327,6 +457,7 @@ def delete_service_ticket():
 
 # Creating a service from admin section
 @app.route('/joeazzi/create-service', methods=('GET', 'POST'))
+@login_required
 def create_service_ticket_view():
     # If the form has been submitted:
     if request.method == 'POST':
@@ -356,6 +487,7 @@ def create_service_ticket_view():
 
 # View that lists all customers (not services, but customers)
 @app.route('/joeazzi/customers', methods=('GET', 'POST'))
+@login_required
 def customers_view():
     # Connect to database
     if not prod:
@@ -377,6 +509,7 @@ def customers_view():
 
 # Individual customer records/info pages
 @app.route('/joeazzi/customers/record', methods=('GET', 'POST'))
+@login_required
 def customer_record_view():
     # Get the current customer_id
     customer_id = request.args.get('customer')
@@ -439,6 +572,7 @@ def customer_record_view():
 
 # Generates a payment link
 @app.route('/joeazzi/service/generatePaymentLink')
+@login_required
 def generate_payment_link():
     # Get the current ticket number
     ticket_num = request.args.get('ticket')
@@ -487,6 +621,7 @@ def generate_payment_link():
 
 # Sends payment link via text
 @app.route('/joeazzi/sendPaymentLink')
+@login_required
 def send_payment_link():
     # Twilio client
     client = Client(account_sid, auth_token)
