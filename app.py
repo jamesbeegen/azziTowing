@@ -111,7 +111,9 @@ if os.environ.get('DATABASE_URL') is not None:
     if os.environ['DATABASE_URL'] == "127.0.0.1":
         app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql+psycopg2://postgres:postgres@localhost:5432/azzitowing"
     else:
-        app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
+        url = os.environ['DATABASE_URL']
+        url = url.replace('postgres://', 'postgresql+psycopg2://')
+        app.config['SQLALCHEMY_DATABASE_URI'] = url
  
 else:
     prod = False
