@@ -151,14 +151,14 @@ db.init_app(app)
 bcrypt.init_app(app)
     
 # Enable CSRF protection
-#csrf = CSRFProtect()
-#csrf.init_app(app)
+csrf = CSRFProtect()
+csrf.init_app(app)
 
 # Name of the local testing database file
 DB = 'database.db'
 
 app.app_context().push()
-db.create_all()
+#db.create_all()
 
 # migrate database to latest revision
 # init()
