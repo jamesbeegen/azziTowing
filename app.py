@@ -193,7 +193,7 @@ try:
     db.session.add(newuser)
     db.session.commit()
 except:
-    pass
+    db.session.rollback()
 
 
 # Set up local database if it doesn't exist
