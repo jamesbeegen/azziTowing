@@ -277,7 +277,10 @@ def login():
         try:
             user = User.query.filter_by(username=form.username.data).first()
             if check_password_hash(user.pwd, form.pwd.data):
-                login_user(user)
+                try:
+                    login_user(user)
+                except:
+                    db.session.rollback()
                 return redirect(url_for('admin_view'))
             else:
                 flash("Invalid Username or password!", "danger")
