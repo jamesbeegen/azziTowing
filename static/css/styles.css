@@ -12,6 +12,15 @@
     box-shadow: 0 2px 4px 0 rgba(0,0,0,.5) !important;
 }
 
+.navbar .nav-link{
+    color: rgb(182, 180, 180);
+}
+
+
+.navbar .nav-link:hover{
+    color: white;
+}
+
 body {
     margin: 0 auto !important;
 }
@@ -118,7 +127,7 @@ ul li{
   }
 
   .nav-link:hover{
-    color:purple;
+    color:rgb(182, 180, 180);
   }
 
   .footer-contact-links {
@@ -140,11 +149,11 @@ ul li{
   }
   
   .footer-link {
-    color: #fff;
+    color: white;
     text-decoration: none;
   }
   
   .footer-link:hover {
-    color:purple;
+    color:rgb(182, 180, 180);
     text-decoration: underline;
   }
