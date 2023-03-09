@@ -180,20 +180,20 @@ twilio_api_sid = os.environ['twilio_api_sid']
 # Should be Joe's email - but mine for testing
 admin_email = os.environ['admin_email']
 
+if not prod:
+    try:
+        pwd = "password"
+        username = "joeazzi"
 
-try:
-    pwd = "password"
-    username = "joeazzi"
+        newuser = User(
+            username=username,
+            pwd=bcrypt.generate_password_hash(pwd).decode('utf-8') ,
+        )
 
-    newuser = User(
-        username=username,
-        pwd=bcrypt.generate_password_hash(pwd).decode('utf-8') ,
-    )
-
-    db.session.add(newuser)
-    db.session.commit()
-except:
-    db.session.rollback()
+        db.session.add(newuser)
+        db.session.commit()
+    except:
+        db.session.rollback()
 
 
 # Set up local database if it doesn't exist
@@ -259,11 +259,16 @@ def customer_exists(customer_email):
     else:
         return False
 
-
 # Manages logins
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
+
+@app.before_request
+def session_handler():
+    session.permanent = True
+    app.permanent_session_lifetime = timedelta(minutes=1)
 
 
 # Login route
@@ -279,7 +284,8 @@ def login():
                     login_user(user)
                 except:
                     db.session.rollback()
-                return redirect(url_for('admin_view'))
+                finally:
+                    return redirect(url_for('admin_view'))
             else:
                 flash("Invalid Username or password!", "danger")
         except Exception as e:
@@ -291,12 +297,6 @@ def login():
         title="Login",
         btn_action="Login"
     )
-
-
-@app.before_request
-def session_handler():
-    session.permanent = True
-    app.permanent_session_lifetime = timedelta(minutes=1)
 
 
 # Logs out user
@@ -314,7 +314,7 @@ def main_view():
 
 
 # Scheduling page / schedule form
-@app.route('/schedule', methods=('GET', 'POST'))
+@app.route('/schedule', methods=('GET', 'POST'), strict_slashes=False)
 def schedule_view():
     # If posting a web form to schedule service:
     if request.method == "POST":
@@ -343,7 +343,7 @@ def schedule_view():
 
 
 # Admin view
-@app.route('/joeazzi')
+@app.route('/joeazzi', strict_slashes=False)
 @login_required
 def admin_view():
     # Get today's date
@@ -379,7 +379,7 @@ def admin_view():
 
 
 # Service ticket view
-@app.route('/joeazzi/service', methods=('GET', 'POST'))
+@app.route('/joeazzi/service', methods=('GET', 'POST'), strict_slashes=False)
 @login_required
 def service_ticket_view():
     # Retrieves ticket number from the GET parameter in the URL
@@ -442,7 +442,7 @@ def service_ticket_view():
 
 
 # Deleting a service/service ticket
-@app.route('/joeazzi/service/delete')
+@app.route('/joeazzi/service/delete', strict_slashes=False)
 @login_required
 def delete_service_ticket():
     # Gets the current ticket number
@@ -464,7 +464,7 @@ def delete_service_ticket():
 
 
 # Creating a service from admin section
-@app.route('/joeazzi/create-service', methods=('GET', 'POST'))
+@app.route('/joeazzi/create-service', methods=('GET', 'POST'), strict_slashes=False)
 @login_required
 def create_service_ticket_view():
     # If the form has been submitted:
@@ -494,7 +494,7 @@ def create_service_ticket_view():
 
 
 # View that lists all customers (not services, but customers)
-@app.route('/joeazzi/customers', methods=('GET', 'POST'))
+@app.route('/joeazzi/customers', methods=('GET', 'POST'), strict_slashes=False)
 @login_required
 def customers_view():
     # Connect to database
@@ -516,7 +516,7 @@ def customers_view():
 
 
 # Individual customer records/info pages
-@app.route('/joeazzi/customers/record', methods=('GET', 'POST'))
+@app.route('/joeazzi/customers/record', methods=('GET', 'POST'), strict_slashes=False)
 @login_required
 def customer_record_view():
     # Get the current customer_id
@@ -579,7 +579,7 @@ def customer_record_view():
 
 
 # Generates a payment link
-@app.route('/joeazzi/service/generatePaymentLink')
+@app.route('/joeazzi/service/generatePaymentLink', strict_slashes=False)
 @login_required
 def generate_payment_link():
     # Get the current ticket number
@@ -628,7 +628,7 @@ def generate_payment_link():
 
 
 # Sends payment link via text
-@app.route('/joeazzi/sendPaymentLink')
+@app.route('/joeazzi/sendPaymentLink', strict_slashes=False)
 @login_required
 def send_payment_link():
     # Twilio client
@@ -663,13 +663,13 @@ def send_payment_link():
 
 
 # Shows when payment is successful
-@app.route('/payment/success')
+@app.route('/payment/success', strict_slashes=False)
 def success():
     return render_template('success.html')
 
 
 # Shown when order/payment is cancelled
-@app.route('/payment/cancel')
+@app.route('/payment/cancel', strict_slashes=False)
 def cancel():
     return render_template('cancel.html')
 
