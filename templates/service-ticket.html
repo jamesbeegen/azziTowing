@@ -96,6 +96,7 @@
                 <div class="col-sm">
                     <label for="notes" class="form-label mt-2">Notes</label>
                     <textarea form="ticket-form" class="form-control" name="notes" value="{{ request.form['notes'] }}">{{ service[8] }}</textarea>
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 </div>
             </div> 
             <div class="row justify-content-center">

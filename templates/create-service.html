@@ -40,6 +40,7 @@
         <div class="form-group">
             <label for="time">Requested Time of Service</label>
             <input class="form-control" type="time" name="time" value="{{ request.form['time'] }}" placeholder="MM/DD/YYYY">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         </div>
         <div class="row justify-content-center">
             <button type="submit" class="btn btn-primary mt-3">Create Service</button>

@@ -80,8 +80,13 @@ Hi, {}! Thanks for choosing Azzi Towing. Please use the link below to pay your i
 Thank you!
 """.format(first_name, link)
 
+def replace_heroku_database_url(url):
+    return url.replace('postgres://', 'postgresql+psycopg2://')
 
 if __name__ == '__main__':
     #proper_payment_link_generation()
     #send_text()
-    send_payment_link('http://google.com', 'jamesbeegen@gmail.com', 'James')
+    #send_payment_link('http://google.com', 'jamesbeegen@gmail.com', 'James')
+    heroku_url = 'postgres://ukcuivpnhjuepm:72d2e70507a80420168396ce6cfc3a0596d30e3ee4e8d4a5af70814f431ca001@ec2-3-229-161-70.compute-1.amazonaws.com:5432/d7d24rcph51e21'
+    new_heroku_url = replace_heroku_database_url(heroku_url)
+    print(new_heroku_url)
