@@ -151,8 +151,8 @@ db.init_app(app)
 bcrypt.init_app(app)
     
 # Enable CSRF protection
-csrf = CSRFProtect()
-csrf.init_app(app)
+csrf = CSRFProtect(app)
+
 
 # Name of the local testing database file
 DB = 'database.db'
