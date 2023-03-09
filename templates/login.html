@@ -30,7 +30,6 @@
         <div class="row mt-4">
             <div class="col-lg-5 col-md-6 m-auto card p-4">
                 <form action="{{ request.path }}" method="POST" class="card-body">
-                    {{ form.csrf_token }}
     
                     {% with messages = get_flashed_messages(with_categories=true) %}
                     <!-- Categories: success (green), info (blue), warning (yellow), danger (red) -->
@@ -58,6 +57,7 @@
                     {% endfor%}
                     <div class="form-group mb-3">
                         {{ form.pwd(class_="form-control",placeholder="Password")}}
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     </div>
                     {% for error in form.pwd.errors %}
                     <div class="alert alert-warning alert-dismissible fade show" role="alert">

@@ -32,6 +32,7 @@
             <div class="col-sm">
                 <label for="email" class="form-label mt-2">Email</label>
                 <input type="text" class="form-control" name="email" value="{{ request.form['email'] }}" placeholder="{{ customer[0] }}" disabled>
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             </div>
         </div>
         <div class="row justify-content-center">
