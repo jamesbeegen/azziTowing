@@ -58,6 +58,7 @@ import stripe
 import datetime
 import psycopg2
 from forms import login_form
+from datetime import timedelta
 from flask import Flask, render_template, request, url_for, redirect, flash, session
 from os.path import exists
 from sqlite3 import connect
@@ -82,7 +83,6 @@ from flask_login import (
     logout_user,
     login_required,
 )
-
 
 # Load environment variables from .env file
 # This fails in production, hence the try/except
@@ -236,8 +236,6 @@ def create_db():
             return redirect('index.html')
         
 
-
-
 # Check if a customer exists
 def customer_exists(customer_email):
     # Connect to Database
@@ -293,6 +291,12 @@ def login():
         title="Login",
         btn_action="Login"
     )
+
+
+@app.before_request
+def session_handler():
+    session.permanent = True
+    app.permanent_session_lifetime = timedelta(minutes=1)
 
 
 # Logs out user
