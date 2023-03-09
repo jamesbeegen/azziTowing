@@ -308,7 +308,6 @@ def main_view():
 
 # Scheduling page / schedule form
 @app.route('/schedule', methods=('GET', 'POST'))
-@login_required
 def schedule_view():
     # If posting a web form to schedule service:
     if request.method == "POST":
