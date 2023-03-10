@@ -681,13 +681,15 @@ def success():
 
     # Connect to database
     if not prod:
-            conn = connect(DB)
+        conn = connect(DB)
     else:
         conn = db_connect()
 
+    cur = conn.cursor()
+
     # Mark the service as paid
-    conn.execute("UPDATE service SET paid=1 WHERE service_id={}".format(param_query_symbol), (ticket_num,))
-    conn.execute("UPDATE service SET completed=1 WHERE service_id={}".format(param_query_symbol), (ticket_num,))
+    cur.execute("UPDATE service SET paid=1 WHERE service_id={}".format(param_query_symbol), (ticket_num,))
+    cur.execute("UPDATE service SET completed=1 WHERE service_id={}".format(param_query_symbol), (ticket_num,))
     conn.commit()
     conn.close()
 
