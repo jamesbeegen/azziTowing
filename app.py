@@ -399,8 +399,10 @@ def service_ticket_view():
             cur.execute("SELECT balance FROM service WHERE service_id = {0}".format(param_query_symbol), (ticket_num,))
             balance_tuple = cur.fetchone()
             balance = balance_tuple[0]
+            regen_payment_link = False
         else:
             balance = request.form['balance']
+            regen_payment_link = True
         if request.form['date'] == '':
             cur.execute('SELECT date FROM service WHERE service_id = {}'.format(ticket_num))
             date = cur.fetchone()[0]
@@ -422,7 +424,12 @@ def service_ticket_view():
         
         conn.commit()
         conn.close()
-        return redirect('/joeazzi/service?ticket={}'.format(ticket_num))
+        
+        if regen_payment_link:
+            return redirect('/joeazzi/service/generatePaymentLink?ticket={}'.format(ticket_num))
+        else:
+            return redirect('/joeazzi/service?ticket={}&updated=true'.format(ticket_num))
+        
 
     # Ran when simply navigating to the service ticket page for a specific service
     else:
@@ -598,6 +605,10 @@ def generate_payment_link():
     # Format the balance for the stripe api
     balance = int(ceil(ticket_details[1])) * 100
 
+    if balance <= 0:
+        return redirect('/joeazzi/service?ticket={}&error=true'.format(ticket_num))
+
+
     # Create stripe checkout session/url
     checkout_session = stripe.checkout.Session.create(
         line_items=[
@@ -614,7 +625,7 @@ def generate_payment_link():
         ],
         payment_method_types=['card'],
         mode='payment',
-        success_url=request.host_url + 'payment/success',
+        success_url=request.host_url + 'payment/success?ticket={}'.format(ticket_num),
         cancel_url=request.host_url + 'payment/cancel',
     )
 
@@ -632,7 +643,7 @@ def generate_payment_link():
 @login_required
 def send_payment_link():
     # Twilio client
-    client = Client(account_sid, auth_token)
+    #client = Client(account_sid, auth_token)
 
     # Get the current ticket number
     ticket_num = request.args.get('ticket')
@@ -650,12 +661,12 @@ def send_payment_link():
     conn.commit()
     conn.close()
 
-    # Send the message
-    message = client.messages.create(
-    body='Hello {}, you need to buy a number before links can be sent'.format(service[3]),
-    from_=twilio_number,
-    to="+1{}".format(service[0])
-    )
+    # # Send the message
+    # message = client.messages.create(
+    # body='Hello {}, you need to buy a number before links can be sent'.format(service[3]),
+    # from_=twilio_number,
+    # to="+1{}".format(service[0])
+    # )
 
     send_payment_link_via_email(admin_email, service[1], service[3], service[2])
     
@@ -665,13 +676,28 @@ def send_payment_link():
 # Shows when payment is successful
 @app.route('/payment/success', strict_slashes=False)
 def success():
-    return render_template('success.html')
+    # Get the current ticket number
+    ticket_num = request.args.get('ticket')
+
+    # Connect to database
+    if not prod:
+            conn = connect(DB)
+    else:
+        conn = db_connect()
+
+    # Mark the service as paid
+    conn.execute("UPDATE service SET paid=1 WHERE service_id={}".format(param_query_symbol), (ticket_num,))
+    conn.execute("UPDATE service SET completed=1 WHERE service_id={}".format(param_query_symbol), (ticket_num,))
+    conn.commit()
+    conn.close()
+
+    return render_template('payment_success.html')
 
 
 # Shown when order/payment is cancelled
 @app.route('/payment/cancel', strict_slashes=False)
 def cancel():
-    return render_template('cancel.html')
+    return render_template('payment_cancel.html')
 
 
 # Main calling function

@@ -74,14 +74,15 @@ def send_payment_link_via_email(admin_email, client_email, name, link):
     try:
         service = build('gmail', 'v1', credentials=creds)
         message = EmailMessage()
-
-        message.set_content("""
-Hi, {}! Thanks for choosing Azzi Towing. Please use the link below to pay for your service.
-
-{}
-
+        message.add_header('Content-Type','text/html')
+        message.set_payload("""
+<p>Hi, {}! Thanks for choosing Azzi Towing. Please use the link below to pay for your service.</p>
+<br>
+<a href="{}">Click here to pay</a>
+<p></p>
+<br>
 Thank you!
-
+<br>
 Joe Azzi
 Owner, Azzi Towing LLC""".format(name, link))
 
@@ -90,12 +91,12 @@ Owner, Azzi Towing LLC""".format(name, link))
         message['Subject'] = 'Azzi Towing: Invoice'
 
         # encoded message
-        encoded_message = base64.urlsafe_b64encode(message.as_bytes()) \
-            .decode()
+        encoded_message = base64.urlsafe_b64encode(message.as_bytes()).decode()
 
         create_message = {
             'raw': encoded_message
         }
+
         # pylint: disable=E1101
         send_message = (service.users().messages().send
                         (userId="me", body=create_message).execute())
