@@ -83,10 +83,33 @@ Thank you!
 def replace_heroku_database_url(url):
     return url.replace('postgres://', 'postgresql+psycopg2://')
 
+
+def generate_time_selections():
+    times = []
+    for hour in range(0, 23, 2):
+        if hour < 12:
+            if hour == 0:
+                times.append('12:00AM - 2:00AM')
+            elif hour == 10:
+                times.append('{}:00AM - {}:00PM'.format(hour%12, hour%12+2))
+            else:
+                times.append('{}:00AM - {}:00AM'.format(hour%12, hour%12+2))
+        else:
+            if hour == 12:
+                times.append('12:00PM - 2:00PM')
+            elif hour == 22:
+                times.append('{}:00PM - 11:59PM'.format(hour%12))
+            else:
+                times.append('{}:00PM - {}:00PM'.format(hour%12, hour%12+2))
+    return times
+
+
 if __name__ == '__main__':
     #proper_payment_link_generation()
     #send_text()
     #send_payment_link('http://google.com', 'jamesbeegen@gmail.com', 'James')
-    heroku_url = 'postgres://ukcuivpnhjuepm:72d2e70507a80420168396ce6cfc3a0596d30e3ee4e8d4a5af70814f431ca001@ec2-3-229-161-70.compute-1.amazonaws.com:5432/d7d24rcph51e21'
-    new_heroku_url = replace_heroku_database_url(heroku_url)
-    print(new_heroku_url)
+    # heroku_url = 'postgres://ukcuivpnhjuepm:72d2e70507a80420168396ce6cfc3a0596d30e3ee4e8d4a5af70814f431ca001@ec2-3-229-161-70.compute-1.amazonaws.com:5432/d7d24rcph51e21'
+    # new_heroku_url = replace_heroku_database_url(heroku_url)
+    # print(new_heroku_url)
+    times = generate_time_selections()
+    for time in times: print(time)

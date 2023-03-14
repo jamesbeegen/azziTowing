@@ -57,7 +57,7 @@ import os
 import stripe
 import datetime
 import psycopg2
-from forms import login_form
+from forms import login_form, schedule_form, generate_time_selections
 from datetime import timedelta
 from flask import Flask, render_template, request, url_for, redirect, flash, session
 from os.path import exists
@@ -73,8 +73,6 @@ from dotenv import load_dotenv
 from flask_wtf.csrf import CSRFProtect
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt,generate_password_hash, check_password_hash
-#from flask_migrate import Migrate
-#from flask_migrate import upgrade,migrate,init,stamp
 from flask_login import (
     UserMixin,
     login_user,
@@ -144,29 +142,20 @@ class User(UserMixin, db.Model):
         return '<User %r>' % self.username
 
 
-#migrate_service = Migrate()
 bcrypt = Bcrypt()
 login_manager.init_app(app)
 db.init_app(app)
-#migrate_service.init_app(app, db)
 bcrypt.init_app(app)
-    
 # Enable CSRF protection
 csrf = CSRFProtect(app)
 
 
 # Name of the local testing database file
 DB = 'database.db'
-
 app.app_context().push()
-if not prod:
-    db.create_all()
 
-# migrate database to latest revision
-# init()
-# stamp()
-# migrate()
-# upgrade()
+# if not prod:
+#     db.create_all()
 
 # API Key for Stripe payments
 stripe_key = os.environ['stripe_key']
@@ -198,6 +187,26 @@ if not prod:
     except:
         db.session.rollback()
 
+
+def get_num_service_requests():
+    # Connect to Database
+    if not prod:
+        conn = connect(DB)
+    else:
+        conn = db_connect()
+
+    # Get customers that have matching email
+    cur = conn.cursor()
+    cur.execute("SELECT service_id FROM service WHERE approved=0")
+    
+    # Fetches only one record into a tuple
+    services = cur.fetchall()
+
+    conn.commit()
+    conn.close()
+    
+    return len(services)
+app.jinja_env.globals.update(get_num_service_requests=get_num_service_requests)
 
 def notify_new_service_request():
     pass
@@ -238,6 +247,7 @@ def create_db():
                     notes TEXT,
                     payment_link TEXT,
                     checkout_session_id TEXT,
+                    approved INT NOT NULL,
                     FOREIGN KEY(customer_email) REFERENCES customer(email)
                 );
             """)
@@ -332,32 +342,48 @@ def main_view():
 # Scheduling page / schedule form
 @app.route('/schedule', methods=('GET', 'POST'), strict_slashes=False)
 def schedule_view():
-    # If posting a web form to schedule service:
-    if request.method == "POST":
-        if not prod:
-            conn = connect(DB)
-        else:
-            conn = db_connect()
 
-        cur = conn.cursor()
+    form = schedule_form()
 
-        # Check if customer exists, create them if not
-        if not customer_exists(request.form['email']):
-            cur.execute("INSERT INTO customer (first_name, last_name, email, phone) VALUES ({0},{0},{0},{0})".format(param_query_symbol), (request.form['first_name'], request.form['last_name'], request.form['email'], request.form['phone_number']))
+    if form.validate_on_submit():
+        try:
+            if not prod:
+                conn = connect(DB)
+            else:
+                conn = db_connect()
 
-        # Create the service in database
-        cur.execute("INSERT INTO service (service_type, date, time, completed, balance, paid, customer_email) VALUES ({0},{0},{0},{0},{0},{0},{0})".format(param_query_symbol), (request.form['service_type'], request.form['date'], request.form['time'], '0', '0.00', '0', request.form['email']))
+            cur = conn.cursor()
+
+            # Check if customer exists, create them if not
+            if not customer_exists(request.form['email']):
+                cur.execute("INSERT INTO customer (first_name, last_name, email, phone) VALUES ({0},{0},{0},{0})".format(param_query_symbol), (request.form['first_name'], request.form['last_name'], request.form['email'], request.form['phone_number']))
+
+            # Create the service in database
+            cur.execute("INSERT INTO service (service_type, date, time, completed, balance, paid, customer_email, approved) VALUES ({0},{0},{0},{0},{0},{0},{0},{0})".format(param_query_symbol), (request.form['service_type'], request.form['date'], request.form['time'], '0', '0.00', '0', request.form['email'], '0'))
+            
+            conn.commit()
+            conn.close()
+
+            notify_new_service_request()
+            return redirect("/schedule?success=true")
+        except Exception as e:
+            flash(e, "danger")
+
+    return render_template("schedule.html",
+        form=form,
+        text="Enter your information below:",
+        title="Schedule a Service",
+        btn_action="Submit"
+    )
+
+    # # If posting a web form to schedule service:
+    # if request.method == "POST":
+        
         
 
-        conn.commit()
-        conn.close()
-
-        notify_new_service_request()
-        return redirect(url_for('schedule_view'))
-
-    # Regular GET request
-    else:
-        return render_template('schedule.html')
+    # # Regular GET request
+    # else:
+    #     return render_template('schedule.html')
 
 
 # Admin view
@@ -376,7 +402,7 @@ def admin_view():
     cur = conn.cursor()
 
     # Get information about services and the customer the service is for
-    cur.execute("SELECT service_id, service_type, date, time, first_name, last_name, completed, paid FROM service INNER JOIN customer on customer.email=service.customer_email")
+    cur.execute("SELECT service_id, service_type, date, time, first_name, last_name, completed, paid FROM service INNER JOIN customer on customer.email=service.customer_email WHERE service.approved=1")
     services = cur.fetchall()
 
     # This is a fix for sqlite not formatting dates properly
@@ -394,6 +420,77 @@ def admin_view():
     conn.commit()
     conn.close()
     return render_template('admin.html', services=services, today=today)
+
+
+@app.route('/joeazzi/service-requests/request', methods=('GET', 'POST'), strict_slashes=False)
+def view_service_request():
+    # Retrieves ticket number from the GET parameter in the URL
+    ticket_num = request.args.get('ticket')
+
+    # Ran when the form is submitted
+    if request.method == "POST":
+        if not prod:
+            conn = connect(DB)
+        else:
+            conn = db_connect()
+
+        cur = conn.cursor()
+
+        # Update the service entry with the data from the form
+        cur.execute("UPDATE service SET approved = {0} WHERE service_id = {0}".format(param_query_symbol), ('1', ticket_num,))
+        
+        conn.commit()
+        conn.close()
+        
+        return redirect('/joeazzi?request-approved=true')
+        
+
+    # Ran when simply navigating to the service ticket page for a specific service
+    else:
+        if not prod:
+            conn = connect(DB)
+        else:
+            conn = db_connect()
+        
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM service INNER JOIN customer on customer.email=service.customer_email WHERE service.service_id = {0}".format(param_query_symbol), (ticket_num,))
+        service = cur.fetchone()
+
+        conn.commit()
+        conn.close()
+
+        return render_template('approve-requests.html', service=service)
+
+
+@app.route('/joeazzi/service-requests', methods=('GET', 'POST'), strict_slashes=False)
+def service_requests():
+    # Connect to database
+    if not prod:
+        conn = connect(DB)
+    else:
+        conn = db_connect()
+
+    cur = conn.cursor()
+
+    # Get information about services and the customer the service is for
+    cur.execute("SELECT service_id, service_type, date, time, first_name, last_name, completed, paid FROM service INNER JOIN customer on customer.email=service.customer_email WHERE service.approved=0")
+    services = cur.fetchall()
+
+    # This is a fix for sqlite not formatting dates properly
+    if not prod:
+        services_list = []
+        for service in services:
+            entry = []
+            for item in service:
+                entry.append(item)
+            services_list.append(entry)
+        services = services_list
+        for service in services:
+            service[2] = datetime.datetime.strptime(service[2], '%Y-%m-%d')
+
+    conn.commit()
+    conn.close()
+    return render_template('service-requests.html', services=services)
 
 
 # Service ticket view
@@ -463,7 +560,7 @@ def service_ticket_view():
         conn.commit()
         conn.close()
 
-        return render_template('service-ticket.html', service=service)
+        return render_template('service-ticket.html', service=service, timeslots=generate_time_selections())
 
 
 # Deleting a service/service ticket
@@ -492,30 +589,38 @@ def delete_service_ticket():
 @app.route('/joeazzi/create-service', methods=('GET', 'POST'), strict_slashes=False)
 @login_required
 def create_service_ticket_view():
-    # If the form has been submitted:
-    if request.method == 'POST':
-        if not prod:
-            conn = connect(DB)
-        else:
-            conn = db_connect()
+    form = schedule_form()
 
-        cur = conn.cursor()
+    if form.validate_on_submit():
+        try:
+            if not prod:
+                conn = connect(DB)
+            else:
+                conn = db_connect()
 
-        # Check if customer exists, create them if not
-        if not customer_exists(request.form['email']):
-            cur.execute("INSERT INTO customer (first_name, last_name, email, phone) VALUES ({0},{0},{0},{0})".format(param_query_symbol), (request.form['first_name'], request.form['last_name'], request.form['email'], request.form['phone_number']))
+            cur = conn.cursor()
 
-        # Create the service
-        cur.execute("INSERT INTO service (service_type, date, time, completed, balance, paid, customer_email) VALUES ({0},{0},{0},{0},{0},{0},{0})".format(param_query_symbol), (request.form['service_type'], request.form['date'], request.form['time'], '0', '0.00', '0', request.form['email']))
-        
-        conn.commit()
-        conn.close()
+            # Check if customer exists, create them if not
+            if not customer_exists(request.form['email']):
+                cur.execute("INSERT INTO customer (first_name, last_name, email, phone) VALUES ({0},{0},{0},{0})".format(param_query_symbol), (request.form['first_name'], request.form['last_name'], request.form['email'], request.form['phone_number']))
 
-        return redirect(url_for('admin_view'))
+            # Create the service in database
+            cur.execute("INSERT INTO service (service_type, date, time, completed, balance, paid, customer_email, approved) VALUES ({0},{0},{0},{0},{0},{0},{0},{0})".format(param_query_symbol), (request.form['service_type'], request.form['date'], request.form['time'], '0', '0.00', '0', request.form['email'], '0'))
+            
+            conn.commit()
+            conn.close()
 
-    # Regular GET request
-    else:
-        return render_template('create-service.html')
+            notify_new_service_request()
+            return redirect("/joeazzi?serviceCreated=true")
+        except Exception as e:
+            flash(e, "danger")
+
+    return render_template("create-service.html",
+        form=form,
+        text="Enter service information below:",
+        title="Schedule a Service",
+        btn_action="Submit"
+    )
 
 
 # View that lists all customers (not services, but customers)
