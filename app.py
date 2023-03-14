@@ -159,7 +159,8 @@ csrf = CSRFProtect(app)
 DB = 'database.db'
 
 app.app_context().push()
-db.create_all()
+if not prod:
+    db.create_all()
 
 # migrate database to latest revision
 # init()
