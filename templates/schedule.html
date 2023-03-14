@@ -106,8 +106,35 @@
                     <div class="text-center">
     
                         <div class="d-grid gap-2 mt-2">
-                            <button type="submit" class="btn btn-block btn-primary mb-3"> {{ btn_action }} </button>
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#confirm-modal">Submit Request</button>
                         </div>                        
+                    </div>
+                    <div class="modal" id="confirm-modal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <!-- Modal Header -->
+                                <div class="modal-header">
+                                    <h4 class="modal-title" style="color:black;">Confirm Information</h4>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <!-- Modal body -->
+                                <div class="modal-body" style="color:black;">
+                                    <p>Name: </p>
+                                    <p>Email: </p>
+                                    <p>Phone: </p>
+                                    <p>Service Requested:</p>
+                                    <p>Date of Service:</p>
+                                    <p>Time Window:</p>
+                                    <p>Notes/Instruction:</p>
+                                </div>
+                                <!-- Modal footer -->
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-block btn-danger" data-bs-dismiss="modal">Go Back</button>
+                                    <button type="submit" class="btn btn-block btn-primary" data-bs-dismiss="modal"> {{ btn_action }} </button>
+                                </div>
+                            </div>
+                        </div>
+                        
                     </div>
                 </form>
             </div>  
