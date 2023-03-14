@@ -8,3 +8,7 @@ credentials.json
 token.json
 instance/
 migrations/
+mykey
+mykey.pub
+joe-credentials.json
+joe-token.json

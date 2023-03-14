@@ -97,7 +97,8 @@ app = Flask(__name__,
             static_folder='static',
             template_folder='templates')
 
-app.secret_key = 'secret-key'
+app.secret_key = 'secret'
+app.config['secret_key'] = 'secret-key'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
 # Checks for Heroku config var, sets to production mode if it finds DATABASE_URL is populated
@@ -176,6 +177,7 @@ auth_token = os.environ['auth_token']
 twilio_number = os.environ['twilio_number']
 twilio_api_key = os.environ['twilio_api_key']
 twilio_api_sid = os.environ['twilio_api_sid']
+owner_phone = os.environ['owner_phone']
 
 # Should be Joe's email - but mine for testing
 admin_email = os.environ['admin_email']
@@ -194,6 +196,19 @@ if not prod:
         db.session.commit()
     except:
         db.session.rollback()
+
+
+def notify_new_service_request():
+    pass
+    # Twilio client
+    # client = Client(account_sid, auth_token)
+
+    # # Send the message
+    # message = client.messages.create(
+    #     body='A new service request has been submitted,check the portal to approve or deny this request.',
+    #     from_=twilio_number,
+    #     to="{}".format(owner_phone)
+    # )
 
 
 # Set up local database if it doesn't exist
@@ -332,9 +347,11 @@ def schedule_view():
         # Create the service in database
         cur.execute("INSERT INTO service (service_type, date, time, completed, balance, paid, customer_email) VALUES ({0},{0},{0},{0},{0},{0},{0})".format(param_query_symbol), (request.form['service_type'], request.form['date'], request.form['time'], '0', '0.00', '0', request.form['email']))
         
+
         conn.commit()
         conn.close()
 
+        notify_new_service_request()
         return redirect(url_for('schedule_view'))
 
     # Regular GET request
