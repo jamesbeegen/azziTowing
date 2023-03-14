@@ -74,6 +74,7 @@ def init_db():
                     notes TEXT,
                     payment_link TEXT,
                     checkout_session_id TEXT,
+                    approved INT NOT NULL,
                     FOREIGN KEY(customer_email) REFERENCES customer(email)
                 );
             """)

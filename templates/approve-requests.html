@@ -1,6 +1,6 @@
 {% extends 'base-admin.html' %}
 {% block stylesheet %}
-    <link rel="stylesheet" href="../css/admin-styles.css">
+    <link rel="stylesheet" href="../../css/admin-styles.css">
 {% endblock %}
 {% block content %}
     <div class="container" id="admin">
@@ -52,46 +52,7 @@
                         {% endfor %}
                     </select>
                 </div>
-                <div class="col-sm">
-                    <label for="balance" class="form-label mt-2">Balance</label>
-                    <input type="text" class="form-control" id="balance" name="balance" value="{{ request.form['balance'] }}" placeholder="{{ service[5] }}">
-                </div>
-                <div class="col-sm">
-                    <label for="paid" class="form-label mt-2">Paid?</label>
-                    {% if service[6] == 0 %}
-                        <select class="form-select" name="paid" value="{{ request.form['paid'] }}">
-                            <option value="0" selected>No</option>
-                            <option value="1">Yes</option>
-                        </select>
-                    {% else %}
-                        <select class="form-select" name="paid" value="{{ request.form['paid'] }}">
-                            <option value="1" selected>Yes</option>
-                            <option value="0">No</option>
-                        </select>
-                    {% endif %}
-                </div>
             </div>
-            <div class="row justify-content-center">
-                <div class="col-sm">
-                    <label for="completed" class="form-label mt-2">Service Completed?</label>
-                    {% if service[4] == 0 %}
-                        <select class="form-select" name="completed" value="{{ request.form['completed'] }}">
-                            <option value="0" selected>No</option>
-                            <option value="1">Yes</option>
-                        </select>
-                    {% else %}
-                        <select class="form-select" name="completed" value="{{ request.form['completed'] }}">
-                            <option value="1" selected>Yes</option>
-                            <option value="0">No</option>
-                        </select>
-                    {% endif %}
-                </div>
-                <div class="col-sm">
-                    <label for="paymentLink" class="form-label mt-2">Payment Link</label>
-                    <a href="{{ service[9] }}"><input class="form-control" name="payment_link" value="{{ request.form['payment_link'] }}" placeholder="{{ service[9] }}" disabled>View Payment Link</a>
-                </div>
-                <div class="col-sm"></div>
-            </div> 
             <div class="row justify-content-center">
                 <h2 class="mt-4">Customer Information</h2>
                 <div class="col-sm">
@@ -116,10 +77,8 @@
             </div> 
             <div class="row justify-content-center">
                 <div class="d-grid gap-2">
-                    <button type="submit" class="btn btn-success btn-lg mt-5" onclick="return checkFields();">Update Ticket</button>\
-                    <a class="btn btn-primary btn-lg mt-3" href="/joeazzi/service/generatePaymentLink?ticket={{ service[0] }}">Generate payment link</a>
-                    <a class="btn btn-warning btn-lg mt-3" href="/joeazzi/sendPaymentLink?ticket={{ service[0] }}">Send payment link</a>
-                    <a class="btn btn-danger btn-lg mt-5" onclick="return confirm('Are you sure you want to delete this service ticket?')" href="/joeazzi/service/delete?ticket={{ service[0] }}">Delete Ticket</a>
+                    <button type="submit" class="btn btn-success btn-lg mt-5" onclick="return confirm('Approve this service request?');">Approve Request</button>
+                    <a class="btn btn-danger btn-lg mt-5" onclick="return confirm('Are you sure you want to delete this service request?')" href="/joeazzi/service/delete?ticket={{ service[0] }}">Deny Request</a>
                 </div>
             </div>
         </form>

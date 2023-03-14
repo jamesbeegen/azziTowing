@@ -1,0 +1,35 @@
+{% extends 'base-admin.html' %}
+{% block stylesheet %}
+<link rel="stylesheet" href="../css/admin-styles.css">
+{% endblock %}
+{% block content %}
+    <div class="container" id="admin">
+        <div class="row justify-content-center">
+            <h1 class="text-center mt-3">Service Requests</h1>  
+            <div class="table-responsive">
+                <table class="table table-primary table-hover">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for service in services %}
+                        <tr>
+                            <td><a class="btn btn-block btn-success mb-2" href="/joeazzi/service-requests/request?ticket={{ service[0] }}">View Request</a>
+                            <td>{{ service[4] }} {{ service[5] }}</td>
+                            <td>{{ service[1] }}</td>
+                            <td>{{ service[2].strftime('%m-%d-%Y') }}</td>
+                            <td>{{ service[3] }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>    
+        </div>
+    </div>
+{% endblock %}
