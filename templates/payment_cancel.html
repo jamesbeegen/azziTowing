@@ -8,8 +8,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
 
     <!-- Custom CSS-->
-    {% block stylesheet %}
-    {% endblock %}
+    <link rel="stylesheet" href="css/styles.css">
+
     <!-- Preconnect for Google Fonts-->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -24,27 +24,13 @@
     <!--Favicon-->
     <link rel="icon" href="../images/azzi-towing-logo.jpg">
 </head>
-<body>
-    <nav class="navbar sticky-top navbar-expand-md navbar-dark bg-primary">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="/joeazzi"><img src="../images/azzi-towing-logo.jpg" width="75" height="45"></a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-                <div class="navbar-nav">
-                    <a class="nav-link" href="/joeazzi">Services</a>
-                    <a class="nav-link" href="/joeazzi/customers">Customers</a>
-                    <a class="nav-link" href="/joeazzi/create-service">Create New Service</a>
-                    <a class="nav-link" href="/">Temp Frontend Link</a>
-                    <a class="nav-link" href="/joeazzi/logout">Logout</a>
-                </div>
-            </div>
+<body style="background-color: #16213E;">
+    <div class="container">
+        <div class="row mt-4 justify-content-center mx-auto">
+            <img src="../images/redx.png" class="mx-auto text-center" style="height:100px;width: 130px;">
+            <h3 style="color: #dbe7ff;" class="mx-auto mt-5 mb-5 text-center">Your payment was cancelled.</h3>
         </div>
-    </nav>
-
-    {% block content %}
-    {% endblock %}
+    </div>
 
     <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
 
@@ -52,6 +38,9 @@
 
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+
+    <!-- Custom JS import-->
+    <script src="js/js.js"></script>
 
 </body>
 </html>

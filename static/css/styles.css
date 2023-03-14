@@ -10,7 +10,27 @@
 
 .navbar {
     box-shadow: 0 2px 4px 0 rgba(0,0,0,.5) !important;
+    justify-content: center;
+    align-items: center;
 }
+
+.navbar-nav a {
+    color: white;
+    background-color: #474E68;
+    border-radius: 10px;
+    text-align: center;
+    font-family: 'Bebas Neue', cursive;
+}
+  
+.navbar-nav a:hover {
+    color: white;
+    background-color: navy;
+    border-radius: 10px;
+    text-align: center;
+    font-family: 'Bebas Neue', cursive;
+}
+
+
 
 body {
     margin: 0 auto !important;
@@ -34,9 +54,6 @@ ul li{
 	list-style-position: inside !important;
 }
 
-.testing-ul{
-
-}
 
 .list-main {
     font-family: 'Urbanist' !important;
@@ -118,7 +135,7 @@ ul li{
   }
 
   .nav-link:hover{
-    color:purple;
+    color:rgb(182, 180, 180);
   }
 
   .footer-contact-links {
@@ -140,12 +157,12 @@ ul li{
   }
   
   .footer-link {
-    color: #fff;
+    color: white;
     text-decoration: none;
   }
   
   .footer-link:hover {
-    color:purple;
+    color:rgb(182, 180, 180);
     text-decoration: underline;
   }
 

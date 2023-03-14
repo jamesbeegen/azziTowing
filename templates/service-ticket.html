@@ -12,6 +12,16 @@
         </nav>
         <form method="post" id="ticket-form">
             <div class="row justify-content-center">
+                {% if request.args.get('error') %}
+                    <div class="alert alert-danger" role="alert">
+                    Balance must be greater than 0 when generating a payment link
+                    </div>
+                {% endif %}
+                {% if request.args.get('updated') %}
+                    <div class="alert alert-success" role="alert">
+                    Service succesfully updated
+                    </div>
+                {% endif %}
                 <h2>Ticket Information</h2>
                 <div class="col-sm">
                     <label for="ticketId" class="form-label mt-2">Ticket ID</label>
@@ -39,7 +49,7 @@
                 </div>
                 <div class="col-sm">
                     <label for="balance" class="form-label mt-2">Balance</label>
-                    <input type="text" class="form-control" name="balance" value="{{ request.form['balance'] }}" placeholder="{{ service[5] }}">
+                    <input type="text" class="form-control" id="balance" name="balance" value="{{ request.form['balance'] }}" placeholder="{{ service[5] }}">
                 </div>
                 <div class="col-sm">
                     <label for="paid" class="form-label mt-2">Paid?</label>
@@ -96,11 +106,12 @@
                 <div class="col-sm">
                     <label for="notes" class="form-label mt-2">Notes</label>
                     <textarea form="ticket-form" class="form-control" name="notes" value="{{ request.form['notes'] }}">{{ service[8] }}</textarea>
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 </div>
             </div> 
             <div class="row justify-content-center">
                 <div class="d-grid gap-2">
-                    <button type="submit" class="btn btn-success btn-lg mt-5" onclick="alert('Ticket Updated');">Update Ticket</button>\
+                    <button type="submit" class="btn btn-success btn-lg mt-5" onclick="return checkFields();">Update Ticket</button>\
                     <a class="btn btn-primary btn-lg mt-3" href="/joeazzi/service/generatePaymentLink?ticket={{ service[0] }}">Generate payment link</a>
                     <a class="btn btn-warning btn-lg mt-3" href="/joeazzi/sendPaymentLink?ticket={{ service[0] }}">Send payment link</a>
                     <a class="btn btn-danger btn-lg mt-5" href="/joeazzi/service/delete?ticket={{ service[0] }}">Delete Ticket</a>
@@ -108,4 +119,13 @@
             </div>
         </form>
     </div>
+    <script>
+        function checkFields(){
+            // // Format the phone number as the user types it
+            // if(document.getElementById('balance').value <= 0 && document.getElementById('balance').getAttribute("placeholder") == 0){
+            //     alert("Enter a balance greater than 0");
+            //     return false;
+            // }
+        }
+    </script>
 {% endblock %}
