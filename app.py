@@ -96,7 +96,7 @@ app = Flask(__name__,
             template_folder='templates')
 
 app.secret_key = 'secret'
-app.config['secret_key'] = 'secret-key'
+app.config['SECRET_KEY'] = 'secret-key'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
 # Checks for Heroku config var, sets to production mode if it finds DATABASE_URL is populated
@@ -147,7 +147,8 @@ login_manager.init_app(app)
 db.init_app(app)
 bcrypt.init_app(app)
 # Enable CSRF protection
-csrf = CSRFProtect(app)
+csrf = CSRFProtect()
+csrf.init_app(app)
 
 
 # Name of the local testing database file
