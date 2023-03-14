@@ -26,7 +26,7 @@ def auth():
     # The file token.json stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
     # time.
-    if os.path.exists('token.json'):
+    if os.path.exists('joe-token.json'):
         creds = Credentials.from_authorized_user_file('token.json', SCOPES)
     # If there are no (valid) credentials available, let the user log in.
     if not creds or not creds.valid:
@@ -34,10 +34,10 @@ def auth():
             creds.refresh(Request())
         else:
             flow = InstalledAppFlow.from_client_secrets_file(
-                'credentials.json', SCOPES)
+                'joe-credentials.json', SCOPES)
             creds = flow.run_local_server(port=0)
         # Save the credentials for the next run
-        with open('token.json', 'w') as token:
+        with open('joe-token.json', 'w') as token:
             token.write(creds.to_json())
 
     try:
@@ -67,7 +67,7 @@ def send_payment_link_via_email(admin_email, client_email, name, link):
             token_json = os.environ['gmail_token']
             with open('token.json', 'w') as f:
                 f.write(token_json)
-            creds = Credentials.from_authorized_user_file('token.json', SCOPES)
+            creds = Credentials.from_authorized_user_file('joe-token.json', SCOPES)
         except:
             pass
 
@@ -110,5 +110,5 @@ Owner, Azzi Towing LLC""".format(name, link))
 
 
 if __name__ == '__main__':
-    #auth()
-    send_payment_link_via_email()
+    auth()
+    #send_payment_link_via_email()
