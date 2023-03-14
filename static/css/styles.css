@@ -165,3 +165,17 @@ ul li{
     color:rgb(182, 180, 180);
     text-decoration: underline;
   }
+
+  .text-aboutus {
+    font-family: 'Urbanist'; 
+    font-size: 18px; 
+    float: 'right';
+    padding-right: 5%;
+  }
+
+  .text-contactus {
+    font-family: 'Urbanist'; 
+    font-size: 20px;
+    padding-left: 8%;
+    padding-right: 8%
+  }
