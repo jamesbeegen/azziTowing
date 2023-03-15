@@ -10,7 +10,41 @@
 
 .navbar {
     box-shadow: 0 2px 4px 0 rgba(0,0,0,.5) !important;
+    justify-content: center;
+    align-items: center;
 }
+
+.navbar-nav a {
+    color: white;
+    background-color: #474E68;
+    border-radius: 10px;
+    text-align: center;
+    font-family: 'Bebas Neue', cursive;
+}
+  
+.navbar-nav a:hover {
+    color: white;
+    background-color: navy;
+    border-radius: 10px;
+    text-align: center;
+    font-family: 'Bebas Neue', cursive;
+}
+
+a.nav-link {
+    margin: 0 10px;
+}
+
+.banner {
+    background-color: #333;
+    text-align: center;
+  }
+  
+  .banner img {
+    width: 100%; /* Adjust this value to resize the image */
+    max-width: 100%; /* Make sure the image doesn't overflow */
+    height: auto; /* Maintain the aspect ratio */
+  }
+  
 
 body {
     margin: 0 auto !important;
@@ -35,4 +69,11 @@ dark-label {
 
 textarea{
     height: 200px
+}
+
+tbody, td, tfoot, th, thead, tr {
+    border-color: inherit;
+    border-style: solid;
+    border-width: 0;
+    font-family: 'Bebas Neue', cursive;
 }

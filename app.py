@@ -155,8 +155,8 @@ csrf.init_app(app)
 DB = 'database.db'
 app.app_context().push()
 
-# if not prod:
-#     db.create_all()
+if not prod:
+     db.create_all()
 
 # API Key for Stripe payments
 stripe_key = os.environ['stripe_key']
