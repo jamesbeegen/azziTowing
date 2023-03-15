@@ -57,7 +57,7 @@ import os
 import stripe
 import datetime
 import psycopg2
-from forms import login_form, schedule_form, generate_time_selections
+from forms import login_form, schedule_form, generate_time_selections, date_schedule_form
 from datetime import timedelta
 from flask import Flask, render_template, request, url_for, redirect, flash, session
 from os.path import exists
@@ -209,6 +209,25 @@ def get_num_service_requests():
     return len(services)
 app.jinja_env.globals.update(get_num_service_requests=get_num_service_requests)
 
+
+def get_available_time_slots(date):
+    # Connect to Database
+    if not prod:
+        conn = connect(DB)
+    else:
+        conn = db_connect()
+    
+    cur = conn.cursor()
+    cur.execute("SELECT time from service where date={}".format(param_query_symbol), (date,))
+    taken_times = cur.fetchall()
+
+    conn.commit()
+    conn.close()
+
+    return taken_times
+app.jinja_env.globals.update(get_available_time_slots=get_available_time_slots)
+
+
 def notify_new_service_request():
     pass
     # Twilio client
@@ -340,10 +359,25 @@ def main_view():
     return render_template('index.html')
 
 
-# Scheduling page / schedule form
-@app.route('/schedule', methods=('GET', 'POST'), strict_slashes=False)
-def schedule_view():
+@app.route('/schedule-success', methods=('GET', 'POST'), strict_slashes=False)
+def schedule_success():
+    name = request.args.get('name')
+    return render_template('schedule-success.html', name=name)
 
+
+@app.route('/schedule', methods=('GET', 'POST'), strict_slashes=False)
+def select_schedule_date():
+    form = date_schedule_form()
+    if form.validate_on_submit():
+        return redirect("/schedule/info?date={}".format(request.form['date']))
+    return render_template('schedule.html', form=form, text="Select your service date", btn_action="Continue")
+
+
+# Scheduling page / schedule form
+@app.route('/schedule/info', methods=('GET', 'POST'), strict_slashes=False)
+def schedule_view():
+    selected_date = request.args.get('date')
+    available_time_slots = get_available_time_slots(selected_date)
     form = schedule_form()
 
     if form.validate_on_submit():
@@ -366,25 +400,18 @@ def schedule_view():
             conn.close()
 
             notify_new_service_request()
-            return redirect("/schedule?success=true")
+            return redirect("/schedule-success?name={}".format(request.form['first_name']))
         except Exception as e:
             flash(e, "danger")
 
-    return render_template("schedule.html",
+    return render_template("schedule2.html",
         form=form,
         text="Enter your information below:",
         title="Schedule a Service",
-        btn_action="Submit"
+        btn_action="Submit", 
+        selected_date=selected_date,
+        available_time_slots=available_time_slots
     )
-
-    # # If posting a web form to schedule service:
-    # if request.method == "POST":
-        
-        
-
-    # # Regular GET request
-    # else:
-    #     return render_template('schedule.html')
 
 
 # Admin view

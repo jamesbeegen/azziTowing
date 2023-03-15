@@ -67,7 +67,7 @@ def send_payment_link_via_email(admin_email, client_email, name, link):
             token_json = os.environ['gmail_token']
             with open('token.json', 'w') as f:
                 f.write(token_json)
-            creds = Credentials.from_authorized_user_file('joe-token.json', SCOPES)
+            creds = Credentials.from_authorized_user_file('token.json', SCOPES)
         except:
             pass
 
@@ -84,7 +84,10 @@ def send_payment_link_via_email(admin_email, client_email, name, link):
 Thank you!
 <br>
 Joe Azzi
-Owner, Azzi Towing LLC""".format(name, link))
+<br>
+Owner,
+<br>
+Azzi Towing LLC""".format(name, link))
 
         message['To'] = client_email
         message['From'] = admin_email

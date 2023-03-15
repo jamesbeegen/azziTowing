@@ -8,7 +8,7 @@
         </div>
         <div class="row justify-content-center">
             <div class="col-lg-5 col-md-6 m-auto card p-4 mt-3">
-                <form action="{{ request.path }}" method="POST" class="card-body">
+                <form action="{{ request.path }}" method="POST" class="card-body" id="schedule-form">
                     {{ form.csrf_token }}
                     {% with messages = get_flashed_messages(with_categories=true) %}
                     <!-- Categories: success (green), info (blue), warning (yellow), danger (red) -->
@@ -25,64 +25,10 @@
                     <div class="text-center">
                         <h5 class="text-center mb-3" style="color: black;">{{ text }}</h5>
                     </div>
-                    <div class="form-group mb-3">
-                        <label for="firstName">First Name</label>
-                        {{ form.first_name(class_="form-control",placeholder="First Name")}}
-                    </div>
-                    {% for error in form.first_name.errors %}
-                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                        {{ error }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                    {% endfor%}
-
-                    <div class="form-group mb-3">
-                        <label for="lastName">Last Name</label>
-                        {{ form.last_name(class_="form-control",placeholder="Last_name")}}
-                    </div>
-                    {% for error in form.last_name.errors %}
-                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                        {{ error }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                    {% endfor%}
-
-                    <div class="form-group mb-3">
-                        <label for="email">Email Address</label>
-                        {{ form.email(class_="form-control",placeholder="john@example.com")}}
-                    </div>
-                    {% for error in form.email.errors %}
-                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                        {{ error }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                    {% endfor%}
-
-                    <div class="form-group mb-3">
-                        <label for="phoneNumber">Phone Number</label>
-                        {{ form.phone_number(class_="form-control",placeholder="(xxx)xxx-xxxx") }}
-                    </div>
-                    {% for error in form.phone_number.errors %}
-                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                        {{ error }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                    {% endfor%}
-
-                    <div class="form-group mb-3">
-                        <label for="serviceType">Service Type</label>
-                        {{ form.service_type(class_="form-control",placeholder="Touch to Select...") }}
-                    </div>
-                    {% for error in form.service_type.errors %}
-                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                        {{ error }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                    {% endfor%}
 
                     <div class="form-group mb-3">
                         <label for="date">Date of Service</label>
-                        {{ form.date(class_="form-control",placeholder="05/29/2023") }}
+                        {{ form.date(class_="form-control",placeholder="MM/DD/YYYY") }}
                     </div>
                     {% for error in form.date.errors %}
                     <div class="alert alert-warning alert-dismissible fade show" role="alert">
@@ -90,52 +36,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                     {% endfor %}
-
-                    <div class="form-group mb-3">
-                        <label for="date">Time Window</label>
-                        {{ form.time(class_="form-control") }}
-                    </div>
-                    {% for error in form.time.errors %}
-                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                        {{ error }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                    {% endfor %}
-
-
-                    <div class="text-center">
-    
-                        <div class="d-grid gap-2 mt-2">
-                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#confirm-modal">Submit Request</button>
-                        </div>                        
-                    </div>
-                    <div class="modal" id="confirm-modal">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <!-- Modal Header -->
-                                <div class="modal-header">
-                                    <h4 class="modal-title" style="color:black;">Confirm Information</h4>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                </div>
-                                <!-- Modal body -->
-                                <div class="modal-body" style="color:black;">
-                                    <p>Name: </p>
-                                    <p>Email: </p>
-                                    <p>Phone: </p>
-                                    <p>Service Requested:</p>
-                                    <p>Date of Service:</p>
-                                    <p>Time Window:</p>
-                                    <p>Notes/Instruction:</p>
-                                </div>
-                                <!-- Modal footer -->
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-block btn-danger" data-bs-dismiss="modal">Go Back</button>
-                                    <button type="submit" class="btn btn-block btn-primary" data-bs-dismiss="modal"> {{ btn_action }} </button>
-                                </div>
-                            </div>
-                        </div>
-                        
-                    </div>
+                    <button type="submit" class="btn btn-block btn-primary mt-3" data-bs-dismiss="modal"> {{ btn_action }} </button>
                 </form>
             </div>  
         </div>                
@@ -143,5 +44,24 @@
 
     <script src="../static/js/js.js"></script>
     <script>
+        function modalizeForm() {
+            var firstName = document.getElementById("first_name").value;
+            var lastName = document.getElementById("last_name").value;
+            var name = firstName + " " + lastName;
+            var email = document.getElementById("email").value;
+            var phone = document.getElementById("phoneNumber").value;
+            var type = document.getElementById("service_type").value;
+            var rawDate = document.getElementById("date").value;
+            var time = document.getElementById("time").value;
+            var dateParts = rawDate.split('-');
+            var date = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]); 
+
+            document.getElementById("name-modal").textContent = name;
+            document.getElementById("email-modal").textContent = email;
+            document.getElementById("phone-modal").textContent = phone;
+            document.getElementById("service-type-modal").textContent = type;
+            document.getElementById("service-date-modal").textContent = date.toLocaleDateString("en-US");
+            document.getElementById("time-modal").textContent = time;
+        }
     </script>
 {% endblock %}

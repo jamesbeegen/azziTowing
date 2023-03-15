@@ -48,3 +48,6 @@ class schedule_form(FlaskForm):
     service_type = SelectField('service_type', validators=[InputRequired()], choices=['Lockout Recovery', 'Fuel Delivery', 'Vehicle Transport', 'Battery Jump'])
     date = DateField('date', validators=[InputRequired()])
     time = SelectField('time', validators=[InputRequired()], choices=generate_time_selections())
+
+class date_schedule_form(FlaskForm):
+    date = DateField('date', validators=[InputRequired()])
