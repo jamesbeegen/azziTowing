@@ -57,7 +57,7 @@ import os
 import stripe
 import datetime
 import psycopg2
-from forms import login_form, schedule_form, generate_time_selections
+from forms import login_form, schedule_form, date_schedule_form
 from datetime import timedelta
 from flask import Flask, render_template, request, url_for, redirect, flash, session
 from os.path import exists
@@ -209,6 +209,58 @@ def get_num_service_requests():
     return len(services)
 app.jinja_env.globals.update(get_num_service_requests=get_num_service_requests)
 
+
+def generate_time_selections():
+    times = []
+    for hour in range(0, 23, 2):
+        if hour < 12:
+            if hour == 0:
+                times.append('12:00AM - 2:00AM')
+            elif hour == 10:
+                times.append('{}:00AM - {}:00PM'.format(hour%12, hour%12+2))
+            else:
+                times.append('{}:00AM - {}:00AM'.format(hour%12, hour%12+2))
+        else:
+            if hour == 12:
+                times.append('12:00PM - 2:00PM')
+            elif hour == 22:
+                times.append('{}:00PM - 11:59PM'.format(hour%12))
+            else:
+                times.append('{}:00PM - {}:00PM'.format(hour%12, hour%12+2))
+    return times
+
+
+def get_available_time_slots(date):
+    print(date)
+    all_slots = generate_time_selections()
+    available_slots = []
+
+    # Connect to Database
+    if not prod:
+        conn = connect(DB)
+    else:
+        conn = db_connect()
+    
+    cur = conn.cursor()
+    cur.execute("SELECT time FROM service WHERE date={}".format(param_query_symbol), (date,))
+    taken_times = cur.fetchall()
+
+    conn.commit()
+    conn.close()
+
+    for slot in all_slots:
+        slot_taken = False
+        for taken_time in taken_times:
+            if slot in taken_time:
+                slot_taken = True
+                continue
+        if not slot_taken:
+            available_slots.append(slot)
+
+    return available_slots
+app.jinja_env.globals.update(get_available_time_slots=get_available_time_slots)
+
+
 def notify_new_service_request():
     pass
     # Twilio client
@@ -244,7 +296,7 @@ def create_db():
                     completed int NOT NULL,
                     balance REAL NOT NULL,
                     paid int NOT NULL,
-                    customer_email INTEGER NOT NULL,
+                    customer_email TEXT NOT NULL,
                     notes TEXT,
                     payment_link TEXT,
                     checkout_session_id TEXT,
@@ -340,11 +392,26 @@ def main_view():
     return render_template('index.html')
 
 
-# Scheduling page / schedule form
-@app.route('/schedule', methods=('GET', 'POST'), strict_slashes=False)
-def schedule_view():
+@app.route('/schedule-success', methods=('GET', 'POST'), strict_slashes=False)
+def schedule_success():
+    name = request.args.get('name')
+    return render_template('schedule-success.html', name=name)
 
+
+@app.route('/schedule', methods=('GET', 'POST'), strict_slashes=False)
+def select_schedule_date():
+    form = date_schedule_form()
+    if form.validate_on_submit():
+        return redirect("/schedule/info?date={}".format(request.form['date']))
+    return render_template('schedule.html', form=form, text="Select your service date", btn_action="Continue")
+
+
+# Scheduling page / schedule form
+@app.route('/schedule/info', methods=('GET', 'POST'), strict_slashes=False)
+def schedule_view():
+    selected_date = request.args.get('date')
     form = schedule_form()
+    form.time.choices = get_available_time_slots(selected_date)
 
     if form.validate_on_submit():
         try:
@@ -366,25 +433,17 @@ def schedule_view():
             conn.close()
 
             notify_new_service_request()
-            return redirect("/schedule?success=true")
+            return redirect("/schedule-success?name={}".format(request.form['first_name']))
         except Exception as e:
             flash(e, "danger")
 
-    return render_template("schedule.html",
+    return render_template("schedule2.html",
         form=form,
         text="Enter your information below:",
         title="Schedule a Service",
-        btn_action="Submit"
+        btn_action="Submit", 
+        selected_date=selected_date
     )
-
-    # # If posting a web form to schedule service:
-    # if request.method == "POST":
-        
-        
-
-    # # Regular GET request
-    # else:
-    #     return render_template('schedule.html')
 
 
 # Admin view
@@ -585,12 +644,21 @@ def delete_service_ticket():
 
     return redirect('/joeazzi')
 
+@app.route('/joeazzi/create-service', methods=('GET', 'POST'), strict_slashes=False)
+def create_service_ticket_contd():
+    form = date_schedule_form()
+    if form.validate_on_submit():
+        return redirect("/joeazzi/create-service-step2?date={}".format(request.form['date']))
+    return render_template('create-service.html', form=form, text="Select your service date", btn_action="Continue")
+
 
 # Creating a service from admin section
-@app.route('/joeazzi/create-service', methods=('GET', 'POST'), strict_slashes=False)
+@app.route('/joeazzi/create-service-step2', methods=('GET', 'POST'), strict_slashes=False)
 @login_required
 def create_service_ticket_view():
+    selected_date = request.args.get('date')
     form = schedule_form()
+    form.time.choices = get_available_time_slots(selected_date)
 
     if form.validate_on_submit():
         try:
@@ -606,21 +674,21 @@ def create_service_ticket_view():
                 cur.execute("INSERT INTO customer (first_name, last_name, email, phone) VALUES ({0},{0},{0},{0})".format(param_query_symbol), (request.form['first_name'], request.form['last_name'], request.form['email'], request.form['phone_number']))
 
             # Create the service in database
-            cur.execute("INSERT INTO service (service_type, date, time, completed, balance, paid, customer_email, approved) VALUES ({0},{0},{0},{0},{0},{0},{0},{0})".format(param_query_symbol), (request.form['service_type'], request.form['date'], request.form['time'], '0', '0.00', '0', request.form['email'], '0'))
+            cur.execute("INSERT INTO service (service_type, date, time, completed, balance, paid, customer_email, approved) VALUES ({0},{0},{0},{0},{0},{0},{0},{0})".format(param_query_symbol), (request.form['service_type'], request.form['date'], request.form['time'], '0', '0.00', '0', request.form['email'], '1'))
             
             conn.commit()
             conn.close()
 
-            notify_new_service_request()
             return redirect("/joeazzi?serviceCreated=true")
         except Exception as e:
             flash(e, "danger")
 
-    return render_template("create-service.html",
+    return render_template("create-service2.html",
         form=form,
         text="Enter service information below:",
         title="Schedule a Service",
-        btn_action="Submit"
+        btn_action="Submit",
+        selected_date=selected_date
     )
 
 
