@@ -29,6 +29,10 @@ label, h1, h2{
     color: white !important;
 }
 
+dark-label {
+    color:black !important;
+}
+
 textarea{
     height: 200px
 }
