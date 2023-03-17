@@ -4,25 +4,30 @@
 {% endblock %}
 {% block content %}
     <div class="container" id="admin">
-        <nav aria-label="breadcrumb" class="mt-3">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="/joeazzi">Services</a></li>
-                <li class="breadcrumb-item active" aria-current="page">{{ service[0] }}</li>
-            </ol>
-        </nav>
+        <h3 class="mt-3 mb-2"><a href="/joeazzi">Go back</a></h3>
         <form method="post" id="ticket-form">
             <div class="row justify-content-center">
                 {% if request.args.get('error') %}
-                    <div class="alert alert-danger" role="alert">
-                    Balance must be greater than 0 when generating a payment link
+                    <div class="alert alert-danger mt-2" role="alert">
+                    Balance must be greater than 0 when generating a payment link.
+                    </div>
+                {% endif %}
+                {% if request.args.get('nolink') %}
+                    <div class="alert alert-danger mt-2" role="alert">
+                    You have to generate a payment link first before sending it.
                     </div>
                 {% endif %}
                 {% if request.args.get('updated') %}
-                    <div class="alert alert-success" role="alert">
-                    Service succesfully updated
+                    <div class="alert alert-success mt-2" role="alert">
+                    Service succesfully updated.
                     </div>
                 {% endif %}
-                <h2>Ticket Information</h2>
+                {% if request.args.get('sent') %}
+                    <div class="alert alert-success mt-2" role="alert">
+                    Payment link sent!
+                    </div>
+                {% endif %}
+                <h2 class="mt-2">Ticket Information</h2>
                 <div class="col-sm">
                     <label for="ticketId" class="form-label mt-2">Ticket ID</label>
                     <input class="form-control" placeholder="{{ service[0] }}" disabled>
@@ -39,7 +44,20 @@
                 </div>
                 <div class="col-sm">
                     <label for="serviceDate" class="form-label mt-2">Service Date</label>
-                    <input type="date" class="form-control" name="date" value="{{ request.form['date'] }}" placeholder="{{ service[2] }}">
+                    <input type="text" onfocus="(this.type='date')" onblur="checkIfChanged()" id="date" class="form-control" name="date" value="{{ request.form['date'] }}" placeholder="{{ service[2] }}">
+                    <script>
+                        var rawDate = "{{ service[2] }}";
+                        var dateParts = rawDate.split('-');
+                        var date = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]); 
+                        document.getElementById("date").placeholder = date.toLocaleDateString("en-US");
+
+                        function checkIfChanged() {
+                            var orig_date = "{{ service[2] }}";
+                            if(document.getElementById("date").textContent === "{{ service[2] }}"){
+                                document.getElementById("date").type = 'text';                           
+                            }
+                        }                        
+                    </script>
                 </div>
             </div>
             <div class="row justify-content-center">

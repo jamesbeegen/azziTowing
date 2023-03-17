@@ -66,7 +66,7 @@ from sqlite3 import connect
 from sqlalchemy import create_engine
 from init_db import init_db, db_connect
 from math import ceil
-from gmail import send_payment_link_via_email, send_temp_password
+from gmail import send_payment_link_via_email, send_temp_password, send_request_recieved_email, send_service_confirmation_email
 from twilio.rest import Client
 from twilio.jwt.access_token import AccessToken
 from twilio.jwt.access_token.grants import ChatGrant
@@ -466,8 +466,20 @@ def schedule_view():
             
             conn.commit()
             conn.close()
-
+            
+            # Notify Joe via text of a new service request
             notify_new_service_request()
+
+            # Send email and text to the customer
+            send_request_recieved_email(
+                admin_email=admin_email,
+                client_email=request.form['email'],
+                name=request.form['first_name'],
+                service_type=request.form['service_type'],
+                date=request.form['date'],
+                time_window=request.form['time']
+            )
+
             return redirect("/schedule-success?name={}".format(request.form['first_name']))
         except Exception as e:
             flash(e, "danger")
@@ -533,7 +545,19 @@ def view_service_request():
 
         # Update the service entry with the data from the form
         cur.execute("UPDATE service SET approved = {0} WHERE service_id = {0}".format(param_query_symbol), ('1', ticket_num,))
+        cur.execute("SELECT customer_email, service_type, date, time, first_name FROM service INNER JOIN customer ON customer.email=service.customer_email WHERE service_id = {}".format(param_query_symbol), (ticket_num,))
+        service = cur.fetchone()
         
+        # Send the confirmation email to the customer
+        send_service_confirmation_email(
+            admin_email=admin_email, 
+            client_email=service[0], 
+            name=service[4],
+            service_type=service[1],
+            date=service[2],
+            time_window=service[3]
+            )
+
         conn.commit()
         conn.close()
         
@@ -888,6 +912,9 @@ def send_payment_link():
     conn.commit()
     conn.close()
 
+    if not service[2]:
+        return redirect("/joeazzi/service?ticket={}&nolink=true".format(ticket_num))
+
     # # Send the message
     # message = client.messages.create(
     # body='Hello {}, you need to buy a number before links can be sent'.format(service[3]),
@@ -897,7 +924,7 @@ def send_payment_link():
 
     send_payment_link_via_email(admin_email, service[1], service[3], service[2])
     
-    return redirect('/joeazzi/service?ticket={}'.format(ticket_num))
+    return redirect('/joeazzi/service?ticket={}&sent=true'.format(ticket_num))
 
 
 # Shows when payment is successful

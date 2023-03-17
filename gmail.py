@@ -156,6 +156,102 @@ def send_temp_password(admin_email, password):
 
     return send_message
 
+def send_request_recieved_email(admin_email, client_email, name, date, service_type, time_window):
+    if os.path.exists('token.json'):
+        creds = Credentials.from_authorized_user_file('token.json', SCOPES)
+    else:
+        try:
+            token_json = os.environ['gmail_token']
+            with open('token.json', 'w') as f:
+                f.write(token_json)
+            creds = Credentials.from_authorized_user_file('token.json', SCOPES)
+        except:
+            pass
+
+    try:
+        service = build('gmail', 'v1', credentials=creds)
+        message = EmailMessage()
+        message.add_header('Content-Type','text/html')
+        message.set_payload("""
+<p>{}, we have received your service request.</p>
+<h4>Service request details:</h4>
+<p style="font-weight: bold;">Type: <span style="font-weight: normal;">{}</span></p>
+<p style="font-weight: bold;">Date: <span style="font-weight: normal;">{}</span></p>
+<p style="font-weight: bold;">Time: <span style="font-weight: normal;">{}</span></p>
+<br>
+<p> We will send another email when the service is confirmed. Thank you!</p>""".format(name, service_type, date, time_window))
+
+        message['To'] = client_email
+        message['From'] = admin_email
+        message['Subject'] = 'Your Service Request Has Been Received'
+
+        # encoded message
+        encoded_message = base64.urlsafe_b64encode(message.as_bytes()).decode()
+
+        create_message = {
+            'raw': encoded_message
+        }
+
+        # pylint: disable=E1101
+        send_message = (service.users().messages().send
+                        (userId="me", body=create_message).execute())
+        print(F'Message Id: {send_message["id"]}')
+
+    except HttpError as error:
+        print(F'An error occurred: {error}')
+        send_message = None
+
+    return send_message
+
+
+def send_service_confirmation_email(admin_email, client_email, name, date, service_type, time_window):
+    if os.path.exists('token.json'):
+        creds = Credentials.from_authorized_user_file('token.json', SCOPES)
+    else:
+        try:
+            token_json = os.environ['gmail_token']
+            with open('token.json', 'w') as f:
+                f.write(token_json)
+            creds = Credentials.from_authorized_user_file('token.json', SCOPES)
+        except:
+            pass
+
+    try:
+        service = build('gmail', 'v1', credentials=creds)
+        message = EmailMessage()
+        message.add_header('Content-Type','text/html')
+        message.set_payload("""
+<p>{}, your service has been approved and confirmed.</p>
+<br>
+<h3>Confirmed service details:</h3>
+<p style="font-weight: bold;">Type: <span style="font-weight: normal;">{}</span></p>
+<p style="font-weight: bold;">Date: <span style="font-weight: normal;">{}</span></p>
+<p style="font-weight: bold;">Time: <span style="font-weight: normal;">{}</span></p>
+<br>
+<p>We look forward to seeing you!</p>""".format(name, service_type, date, time_window))
+
+        message['To'] = client_email
+        message['From'] = admin_email
+        message['Subject'] = 'Service Confirmation'
+
+        # encoded message
+        encoded_message = base64.urlsafe_b64encode(message.as_bytes()).decode()
+
+        create_message = {
+            'raw': encoded_message
+        }
+
+        # pylint: disable=E1101
+        send_message = (service.users().messages().send
+                        (userId="me", body=create_message).execute())
+        print(F'Message Id: {send_message["id"]}')
+
+    except HttpError as error:
+        print(F'An error occurred: {error}')
+        send_message = None
+
+    return send_message
+
 if __name__ == '__main__':
     auth()
     #send_payment_link_via_email()
