@@ -31,3 +31,12 @@ class schedule_form(FlaskForm):
 
 class date_schedule_form(FlaskForm):
     date = DateField('date', validators=[InputRequired()])
+
+
+class forgot_password_form(FlaskForm):
+    email = EmailField('email', validators=[InputRequired()])
+
+
+class change_password_form(FlaskForm):
+    pwd = PasswordField(validators=[InputRequired()])
+    confirm_pwd = PasswordField(validators=[InputRequired()])

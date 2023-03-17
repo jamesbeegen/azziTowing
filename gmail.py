@@ -26,7 +26,7 @@ def auth():
     # The file token.json stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
     # time.
-    if os.path.exists('joe-token.json'):
+    if os.path.exists('token.json'):
         creds = Credentials.from_authorized_user_file('token.json', SCOPES)
     # If there are no (valid) credentials available, let the user log in.
     if not creds or not creds.valid:
@@ -34,10 +34,10 @@ def auth():
             creds.refresh(Request())
         else:
             flow = InstalledAppFlow.from_client_secrets_file(
-                'joe-credentials.json', SCOPES)
+                'credentials.json', SCOPES)
             creds = flow.run_local_server(port=0)
         # Save the credentials for the next run
-        with open('joe-token.json', 'w') as token:
+        with open('token.json', 'w') as token:
             token.write(creds.to_json())
 
     try:
@@ -111,6 +111,50 @@ Azzi Towing LLC""".format(name, link))
 
     return send_message
 
+def send_temp_password(admin_email, password):
+    if os.path.exists('token.json'):
+        creds = Credentials.from_authorized_user_file('token.json', SCOPES)
+    else:
+        try:
+            token_json = os.environ['gmail_token']
+            with open('token.json', 'w') as f:
+                f.write(token_json)
+            creds = Credentials.from_authorized_user_file('token.json', SCOPES)
+        except:
+            pass
+
+    try:
+        service = build('gmail', 'v1', credentials=creds)
+        message = EmailMessage()
+        message.add_header('Content-Type','text/html')
+        message.set_payload("""
+<p>Temporary login password:</p>
+<br>
+<p>{}</p>
+<br>
+<p>You can change your password to a permanent password after logging in with the temporary password</p>""".format(password))
+
+        message['To'] = admin_email
+        message['From'] = admin_email
+        message['Subject'] = 'Azzi Towing: Temporary Password'
+
+        # encoded message
+        encoded_message = base64.urlsafe_b64encode(message.as_bytes()).decode()
+
+        create_message = {
+            'raw': encoded_message
+        }
+
+        # pylint: disable=E1101
+        send_message = (service.users().messages().send
+                        (userId="me", body=create_message).execute())
+        print(F'Message Id: {send_message["id"]}')
+
+    except HttpError as error:
+        print(F'An error occurred: {error}')
+        send_message = None
+
+    return send_message
 
 if __name__ == '__main__':
     auth()

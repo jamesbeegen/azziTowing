@@ -54,10 +54,11 @@ You will notice that in each function that interacts with the database, there is
 The connect() function can be traced to the sqlite3 import, and the db_connect() can be traced to the init_db import below. connect() simply connects to the database.db file, and db_connect() actually connects to a postgres database - db_connect() is only run in "Production" / "Postgres" mode in which prod is set to True. It's becoming more burdensome to add this at every interaction with the database, and to have "hotfixes" for shortcomings of sqlite functionality in order to make both environments work.
 """
 import os
+import random, string
 import stripe
 import datetime
 import psycopg2
-from forms import login_form, schedule_form, date_schedule_form
+from forms import login_form, schedule_form, date_schedule_form, forgot_password_form, change_password_form
 from datetime import timedelta
 from flask import Flask, render_template, request, url_for, redirect, flash, session
 from os.path import exists
@@ -65,7 +66,7 @@ from sqlite3 import connect
 from sqlalchemy import create_engine
 from init_db import init_db, db_connect
 from math import ceil
-from gmail import send_payment_link_via_email
+from gmail import send_payment_link_via_email, send_temp_password
 from twilio.rest import Client
 from twilio.jwt.access_token import AccessToken
 from twilio.jwt.access_token.grants import ChatGrant
@@ -338,6 +339,15 @@ def customer_exists(customer_email):
     else:
         return False
 
+
+# Sets the user password to a new password
+def set_user_password(password):
+    user = User.query.filter_by(username="joeazzi").first()
+    new_password = bcrypt.generate_password_hash(password).decode('utf-8')
+    user.pwd = new_password
+    db.session.commit()
+
+
 # Manages logins
 @login_manager.user_loader
 def load_user(user_id):
@@ -347,9 +357,34 @@ def load_user(user_id):
 @app.before_request
 def session_handler():
     session.permanent = True
-    app.permanent_session_lifetime = timedelta(minutes=1)
+    app.permanent_session_lifetime = timedelta(minutes=10)
 
 
+@app.route("/joeazzi/reset-password", methods=("GET", "POST"), strict_slashes=False)
+def reset_password_view():
+    form = forgot_password_form()
+    if form.validate_on_submit():
+        if form.email.data == os.environ['admin_email']:
+            temp_password = "".join(random.choices(string.ascii_letters + string.digits, k=15))
+            set_user_password(str(temp_password))
+            send_temp_password(admin_email=admin_email, password=str(temp_password))
+        return render_template('reset-email-sent.html')
+    return render_template("password-reset.html", form=form, text="Enter email address", btn_action="Submit")
+
+
+@app.route("/joeazzi/change-password", methods=("GET", "POST"), strict_slashes=False)
+@login_required
+def change_password_view():
+    form = change_password_form()
+    if form.validate_on_submit():
+        if str(form.pwd.data) == str(form.confirm_pwd.data):
+            set_user_password(str(form.pwd.data))
+            flash("Password succesfully changed", "success")
+        else:
+            flash("Passwords do not match", "danger")
+
+    return render_template("change-password.html", form=form, text="Enter new password", btn_action="Submit")
+        
 # Login route
 @app.route("/joeazzi/login/", methods=("GET", "POST"), strict_slashes=False)
 def login():

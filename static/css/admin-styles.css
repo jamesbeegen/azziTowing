@@ -14,12 +14,16 @@
     align-items: center;
 }
 
-.navbar-nav a {
+.navbar-nav .nav-link {
     color: white;
     background-color: #474E68;
     border-radius: 10px;
     text-align: center;
     font-family: 'Bebas Neue', cursive;
+}
+
+.dropdown-item {
+    text-align: center !important;
 }
   
 .navbar-nav a:hover {
@@ -30,8 +34,9 @@
     font-family: 'Bebas Neue', cursive;
 }
 
-a.nav-link {
+.nav-link {
     margin: 0 10px;
+    margin-bottom:3px;
 }
 
 .banner {
