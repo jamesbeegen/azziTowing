@@ -143,6 +143,7 @@ ul li{
   
   .nav-link {
     margin: 0 10px;
+    margin-bottom:3px;
   }
 
   .nav-link:hover{
