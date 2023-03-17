@@ -9,7 +9,7 @@
 }
 
 .navbar {
-    box-shadow: 0 2px 4px 0 rgba(0,0,0,.5) !important;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5) !important;
     justify-content: center;
     align-items: center;
 }
@@ -19,12 +19,12 @@
     background-color: #474E68;
     border-radius: 10px;
     text-align: center;
-    font-family: 'Bebas Neue', cursive;
+    font-family: 'Helvetica', cursive;
 }
   
 .navbar-nav a:hover {
     color: white;
-    background-color: navy;
+    background-color: rgb(161, 161, 231);
     border-radius: 10px;
     text-align: center;
 }
@@ -62,26 +62,26 @@ ul li{
 .list-main {
     font-size: 25px !important;
     list-style-position: outside !important;
-    font-family: 'Bebas Neue', cursive;
+    font-family: 'Helvetica', cursive;
 }
 
 .service-list {
     margin: 0 auto !important;
-    font-family: 'Bebas Neue', cursive;
+    font-family: 'Helvetica', cursive;
 }
 
 #about-us {
     background-color: #474E68 !important;
     color: aliceblue;
     box-shadow: 0 2px 4px 0 rgba(0,0,0,.5) !important;
-    font-family: 'Bebas Neue', cursive;
+    font-family: 'Helvetica', cursive;
 }
 
 #services {
     background-color: #282A3A !important;
     color: aliceblue;
     box-shadow: 0 2px 4px 0 rgba(0,0,0,.5) !important;
-    font-family: 'Bebas Neue', cursive;
+    font-family: 'Helvetica', cursive;
     
 }
 
@@ -94,7 +94,7 @@ ul li{
     background-color: #16213E !important;
     color: aliceblue;
     box-shadow: 0 2px 4px 0 rgba(0,0,0,.5) !important;
-    font-family: 'Bebas Neue', cursive;
+    font-family: 'Helvetica', cursive;
 }
 
 .bg-primary {
@@ -131,7 +131,7 @@ ul li{
 .nav-footer {
     display: flex;
     justify-content: center;
-    font-family: 'Bebas Neue', cursive;
+    font-family: 'Helvetica', cursive;
   }
   
   .nav-list {
@@ -154,7 +154,7 @@ ul li{
     justify-content: center;
     align-items: center;
     margin-top: 20px;
-    font-family: 'Bebas Neue', cursive;
+    font-family: 'Helvetica', cursive;
   }
   
   .footer-contact-list {
@@ -162,7 +162,7 @@ ul li{
     list-style: none;
     padding: 0;
     margin: 0;
-    font-family: 'Bebas Neue', cursive;
+    font-family: 'Helvetica', cursive;
   }
   
   .footer-contact-list li {
@@ -172,7 +172,7 @@ ul li{
   .footer-link {
     color: white;
     text-decoration: none;
-    font-family: 'Bebas Neue', cursive;
+    font-family: 'Helvetica', cursive;
   }
   
   .footer-link:hover {
@@ -181,14 +181,14 @@ ul li{
   }
 
   .text-aboutus {
-    font-family: 'Bebas Neue', cursive;
+    font-family: 'Helvetica', cursive;
     font-size: 18px; 
     float: 'right';
     padding-right: 5%;
   }
 
   .text-contactus {
-    font-family: 'Bebas Neue', cursive;
+    font-family: 'Helvetica', cursive;
     font-size: 20px;
     padding-left: 8%;
     padding-right: 8%
