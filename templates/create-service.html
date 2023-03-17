@@ -5,46 +5,61 @@
 {% endblock %}
 
 {% block content %}
-<div class="container">
-    <h2 class="text-center mt-3">Create New Service</h2>
-    <form method="post" id="schedule">
-        <div class="form-group">
-            <label for="firstName">First Name</label>
-            <input type="text" class="form-control" name="first_name" value="{{ request.form['first_name'] }}" aria-describedby="emailHelp" placeholder="Enter first name">
-        </div>
-        <div class="form-group">
-            <label for="lastName">Last Name</label>
-            <input type="text" class="form-control" name="last_name" value= "{{ request.form['last_name'] }}" aria-describedby="emailHelp" placeholder="Enter last name">
-        </div>
-        <div class="form-group">
-            <label for="email">Email address</label>
-            <input type="email" class="form-control" name="email" value= "{{ request.form['email'] }}"  aria-describedby="emailHelp" placeholder="Enter email">
-        </div>
-        <div class="form-group">
-            <label for="phone">Phone number</label>
-            <input type="text" class="form-control" name="phone_number" id="phoneNumber" value= "{{ request.form['phone_number'] }}"  placeholder="Phone Number">
-        </div>
-        <div class="form-group">
-            <label for="serviceType">Service Type</label>
-            <select class="form-select" name="service_type" value="{{ request.form['service_type'] }}">
-                <option value="Lockout Recovery">Lockout Recovery</option>
-                <option value="Vehicle Transport/Delivery">Vehicle Transport/Delivery</option>
-                <option value="Fuel Delivery">Fuel Delivery</option>
-                <option value="Battery Jump">Battery Jump</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="date">Date of Service</label>
-            <input class="form-control" type="date" name="date" value="{{ request.form['date'] }}" placeholder="MM/DD/YYYY">
-        </div>
-        <div class="form-group">
-            <label for="time">Requested Time of Service</label>
-            <input class="form-control" type="time" name="time" value="{{ request.form['time'] }}" placeholder="MM/DD/YYYY">
-        </div>
-        <div class="row justify-content-center">
-            <button type="submit" class="btn btn-primary mt-3">Create Service</button>
-        </div>
-    </form>
-</div>
-<script src="js/js.js"></script>
+<h2 style="color:aliceblue;" class="mt-3 text-center">Create a Service Ticket</h2>
+<div class="row justify-content-center">
+    <div class="col-lg-5 col-md-6 m-auto card p-4 mt-3">
+        <form action="{{ request.path }}" method="POST" class="card-body" id="schedule-form">
+            {{ form.csrf_token }}
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            <!-- Categories: success (green), info (blue), warning (yellow), danger (red) -->
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{category}} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+            
+            <div class="text-center">
+                <h5 class="text-center mb-3" style="color: black;">{{ text }}</h5>
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="date">Date of Service</label>
+                {{ form.date(class_="form-control",placeholder="MM/DD/YYYY") }}
+            </div>
+            {% for error in form.date.errors %}
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                {{ error }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-block btn-primary mt-3" data-bs-dismiss="modal"> {{ btn_action }} </button>
+        </form>
+    </div>  
+</div>                
+<script src="../js/js.js"></script>
+<script>
+    function modalizeForm() {
+        var firstName = document.getElementById("first_name").value;
+        var lastName = document.getElementById("last_name").value;
+        var name = firstName + " " + lastName;
+        var email = document.getElementById("email").value;
+        var phone = document.getElementById("phoneNumber").value;
+        var type = document.getElementById("service_type").value;
+        var rawDate = document.getElementById("date").value;
+        var time = document.getElementById("time").value;
+        var dateParts = rawDate.split('-');
+        var date = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]); 
+
+        document.getElementById("name-modal").textContent = name;
+        document.getElementById("email-modal").textContent = email;
+        document.getElementById("phone-modal").textContent = phone;
+        document.getElementById("service-type-modal").textContent = type;
+        document.getElementById("service-date-modal").textContent = date.toLocaleDateString("en-US");
+        document.getElementById("time-modal").textContent = time;
+    }
+</script>
 {% endblock %}

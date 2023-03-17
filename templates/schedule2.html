@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+{% block stylesheet %}
+<link rel="stylesheet" href="../css/styles.css">
+{% endblock %}
+{% block content %}
+    <!-- First divider/area-->
+    <div class="container-fluid" id="schedule">
+        <div class="row justify-content-center">
+            <h1 class="text-center mt-2" style="font-family: 'Staatliches'; font-size: 90px">Schedule a Service</h1>
+            <p class="m-auto mb-4" style="max-width:760px;">Our online scheduling form makes it easy to request the services you need. Simply fill out the form with your information and service request details, and we will quickly get back to you to confirm your appointment. Don't wait, book your appointment today!</p>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-lg-5 col-md-6 m-auto card p-4 mt-3">
+                <form action="{{ request.path }}" method="POST" class="card-body" id="schedule-form">
+                    {{ form.csrf_token }}
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                    <!-- Categories: success (green), info (blue), warning (yellow), danger (red) -->
+                    {% if messages %}
+                    {% for category, message in messages %}
+                    <div class="alert alert-{{category}} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+                    {% endwith %}
+                    
+                    <div class="text-center">
+                        <h5 class="text-center mb-3" style="color: black;">{{ text }}</h5>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="firstName">First Name</label>
+                        {{ form.first_name(class_="form-control",placeholder="First Name")}}
+                    </div>
+                    {% for error in form.first_name.errors %}
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        {{ error }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endfor%}
+
+                    <div class="form-group mb-3">
+                        <label for="lastName">Last Name</label>
+                        {{ form.last_name(class_="form-control",placeholder="Last_name")}}
+                    </div>
+                    {% for error in form.last_name.errors %}
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        {{ error }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endfor%}
+
+                    <div class="form-group mb-3">
+                        <label for="email">Email Address</label>
+                        {{ form.email(class_="form-control",placeholder="john@example.com")}}
+                    </div>
+                    {% for error in form.email.errors %}
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        {{ error }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endfor%}
+
+                    <div class="form-group mb-3">
+                        <label for="phoneNumber">Phone Number</label>
+                        {{ form.phone_number(class_="form-control",placeholder="(xxx)xxx-xxxx") }}
+                    </div>
+                    {% for error in form.phone_number.errors %}
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        {{ error }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endfor%}
+
+                    <div class="form-group mb-3">
+                        <label for="serviceType">Service Type</label>
+                        {{ form.service_type(class_="form-control",placeholder="Touch to Select...") }}
+                    </div>
+                    {% for error in form.service_type.errors %}
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        {{ error }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endfor%}
+
+                    <div class="form-group mb-3">
+                        <label for="date">Date of Service &nbsp;<span><a href="/schedule"> Change </a></span></label>
+                        {{ form.date(class_="form-control", placeholder=selected_date, readonly="readonly", value=selected_date) }}
+                        <!--<input class="form-control" type="text" id="date" name="date" value="{{ selected_date }}" disabled />-->
+                    </div>
+                    {% for error in form.date.errors %}
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        {{ error }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endfor %}
+
+                    <div class="form-group mb-3">
+                        <label for="time">Time Window</label>
+                        {{ form.time(class_="form-control") }}
+                    </div>
+                    {% for error in form.time.errors %}
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        {{ error }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endfor %}
+
+                    <div class="text-center">
+                        <div class="d-grid gap-2 mt-2">
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#confirm-modal" onclick="modalizeForm();">Submit Request</button>
+                        </div>                        
+                    </div>
+
+                    <div class="modal" id="confirm-modal">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <!-- Modal Header -->
+                                <div class="modal-header">
+                                    <h4 class="modal-title" style="color:black;">Confirm Information</h4>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <!-- Modal body -->
+                                <div class="modal-body" style="color:black;">
+                                    <p style="font-weight: bold;">Name: <span style="font-weight: normal;" id="name-modal"></span></p>
+                                    <p style="font-weight: bold;">Email: <span style="font-weight: normal;" id="email-modal"></span></p>
+                                    <p style="font-weight: bold;">Phone: <span style="font-weight: normal;" id="phone-modal"></span></p>
+                                    <p style="font-weight: bold;">Service Requested: <span style="font-weight: normal;" id="service-type-modal"></span></p>
+                                    <p style="font-weight: bold;">Date of Service: <span style="font-weight: normal;" id="service-date-modal"></span></p>
+                                    <p style="font-weight: bold;">Time Window: <span style="font-weight: normal;" id="time-modal"></span></p>
+                                    <p style="font-weight: bold;">Notes/Instruction: <span style="font-weight: normal;" id="notes-modal"></span></p>
+                                </div>
+                                <!-- Modal footer -->
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-block btn-danger" data-bs-dismiss="modal">Go Back</button>
+                                    <button type="submit" class="btn btn-block btn-success" data-bs-dismiss="modal">{{ btn_action }}</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </form>
+            </div>  
+        </div>                
+    </div>
+
+    <script src="../js/js.js"></script>
+    <script>
+        function modalizeForm() {
+            var firstName = document.getElementById("first_name").value;
+            var lastName = document.getElementById("last_name").value;
+            var name = firstName + " " + lastName;
+            var email = document.getElementById("email").value;
+            var phone = document.getElementById("phoneNumber").value;
+            var type = document.getElementById("service_type").value;
+            var rawDate = document.getElementById("date").value;
+            var time = document.getElementById("time").value;
+            var dateParts = rawDate.split('-');
+            var date = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]); 
+
+            document.getElementById("name-modal").textContent = name;
+            document.getElementById("email-modal").textContent = email;
+            document.getElementById("phone-modal").textContent = phone;
+            document.getElementById("service-type-modal").textContent = type;
+            document.getElementById("service-date-modal").textContent = date.toLocaleDateString("en-US");
+            document.getElementById("time-modal").textContent = time;
+        }
+    </script>
+{% endblock %}

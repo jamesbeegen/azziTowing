@@ -9,7 +9,31 @@
 }
 
 .navbar {
-    box-shadow: 0 2px 4px 0 rgba(0,0,0,.5) !important;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5) !important;
+    justify-content: center;
+    align-items: center;
+}
+
+.navbar-nav a {
+    color: white;
+    background-color: #474E68;
+    border-radius: 10px;
+    text-align: center;
+    font-family: 'Helvetica', cursive;
+}
+  
+.navbar-nav a:hover {
+    color: white;
+    background-color: rgb(161, 161, 231);
+    border-radius: 10px;
+    text-align: center;
+}
+
+
+.banner img {
+  width: 100%; /* Adjust this value to resize the image */
+  max-width: 100%; /* Make sure the image doesn't overflow */
+  height: auto; /* Maintain the aspect ratio */
 }
 
 body {
@@ -34,30 +58,31 @@ ul li{
 	list-style-position: inside !important;
 }
 
-.testing-ul{
-
-}
 
 .list-main {
-    font-family: 'Urbanist' !important;
     font-size: 25px !important;
     list-style-position: outside !important;
+    font-family: 'Helvetica', cursive;
 }
 
 .service-list {
     margin: 0 auto !important;
+    font-family: 'Helvetica', cursive;
 }
 
 #about-us {
     background-color: #474E68 !important;
     color: aliceblue;
     box-shadow: 0 2px 4px 0 rgba(0,0,0,.5) !important;
+    font-family: 'Helvetica', cursive;
 }
 
 #services {
     background-color: #282A3A !important;
     color: aliceblue;
     box-shadow: 0 2px 4px 0 rgba(0,0,0,.5) !important;
+    font-family: 'Helvetica', cursive;
+    
 }
 
 .list-row{
@@ -69,6 +94,7 @@ ul li{
     background-color: #16213E !important;
     color: aliceblue;
     box-shadow: 0 2px 4px 0 rgba(0,0,0,.5) !important;
+    font-family: 'Helvetica', cursive;
 }
 
 .bg-primary {
@@ -83,18 +109,19 @@ ul li{
 }
 
 #schedule{
-    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('../images/tow-truck.jpg') !important;
+    background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url('../images/tow-truck.jpg') !important;
     background-size: cover !important;                      /* <------ */
     background-repeat: no-repeat !important;
     background-position: center center !important;
-    height: 1200px !important;
+    min-height: 1200px !important;
     color: aliceblue !important;
 }
 
 .form-group {
-    max-width: 400px !important;
+    max-width: 1000px !important;
     margin: 0 auto !important;
     margin-top: 20px !important;
+    color: black;
 }
 
 .schedule-form-button {
@@ -104,6 +131,7 @@ ul li{
 .nav-footer {
     display: flex;
     justify-content: center;
+    font-family: 'Helvetica', cursive;
   }
   
   .nav-list {
@@ -115,10 +143,11 @@ ul li{
   
   .nav-link {
     margin: 0 10px;
+    margin-bottom:3px;
   }
 
   .nav-link:hover{
-    color:purple;
+    color:rgb(182, 180, 180);
   }
 
   .footer-contact-links {
@@ -126,6 +155,7 @@ ul li{
     justify-content: center;
     align-items: center;
     margin-top: 20px;
+    font-family: 'Helvetica', cursive;
   }
   
   .footer-contact-list {
@@ -133,6 +163,7 @@ ul li{
     list-style: none;
     padding: 0;
     margin: 0;
+    font-family: 'Helvetica', cursive;
   }
   
   .footer-contact-list li {
@@ -140,11 +171,26 @@ ul li{
   }
   
   .footer-link {
-    color: #fff;
+    color: white;
     text-decoration: none;
+    font-family: 'Helvetica', cursive;
   }
   
   .footer-link:hover {
-    color:purple;
+    color:rgb(182, 180, 180);
     text-decoration: underline;
+  }
+
+  .text-aboutus {
+    font-family: 'Helvetica', cursive;
+    font-size: 18px; 
+    float: 'right';
+    padding-right: 5%;
+  }
+
+  .text-contactus {
+    font-family: 'Helvetica', cursive;
+    font-size: 20px;
+    padding-left: 8%;
+    padding-right: 8%
   }

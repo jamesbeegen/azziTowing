@@ -1,5 +1,4 @@
 import os
-from os import environ
 from psycopg2 import connect
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 
@@ -21,31 +20,37 @@ def db_connect():
         
 # Initializing connect to postgres default database
 def init_connect():
-    conn = connect(
-            host=os.environ.get('DATABASE_URL'),
-            database="postgres",
-            user='postgres',
-            password='postgres'
-    )
-
-    return conn
+    try:
+        conn = connect(
+                host=os.environ.get('DATABASE_URL'),
+                database="postgres",
+                user='postgres',
+                password='postgres'
+        )
+    except:
+        return None
+    else:
+        return conn
 
 
 # Initializes the database
 def init_db():
-    # Initializing connection to create azzitowing database
-    if os.environ.get('HEROKU') != 'true':
-        conn = init_connect()
-        conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
-        cur = conn.cursor()
-        cur.execute('CREATE DATABASE azzitowing')
-        conn.close()
-
     # Creates tables within the azzitowing database
     conn = db_connect()
     cur = conn.cursor()
     cur.execute('DROP TABLE IF EXISTS customer;')
     cur.execute('DROP TABLE IF EXISTS service;')
+    cur.execute('DROP TABLE IF EXISTS users;')
+
+    # # Create the users table
+    # cur.execute("""
+    #             CREATE TABLE users(
+    #                 username TEXT NOT NULL UNIQUE,
+    #                 password NOT NULL UNIQUE
+    #             );
+    #         """)
+
+    # Create the customer table
     cur.execute("""
                 CREATE TABLE customer(
                     email TEXT NOT NULL PRIMARY KEY,
@@ -55,6 +60,7 @@ def init_db():
                 );
             """)
 
+    # Create the service table
     cur.execute("""
                 CREATE TABLE service(
                     service_id SERIAL PRIMARY KEY,
@@ -68,6 +74,7 @@ def init_db():
                     notes TEXT,
                     payment_link TEXT,
                     checkout_session_id TEXT,
+                    approved INT NOT NULL,
                     FOREIGN KEY(customer_email) REFERENCES customer(email)
                 );
             """)

@@ -9,6 +9,9 @@
 
     <!-- Custom CSS-->
     <link rel="stylesheet" href="css/styles.css">
+    <!-- Custom CSS-->
+    {% block stylesheet %}
+    {% endblock %}
 
     <!-- Preconnect for Google Fonts-->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -25,9 +28,10 @@
     <link rel="icon" href="../images/azzi-towing-logo.jpg">
 </head>
 <body>
-    <nav class="navbar sticky-top navbar-expand-md navbar-dark bg-primary">
+    <div class="banner"><img src="../images/banner-azzi-towing.png" alt="Azzi Towing"></div>
+    <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-primary" style="border: 1px solid rgb(141, 139, 139);">
         <div class="container-fluid">
-            <a class="navbar-brand" href="/#top"> <img src="../images/azzi-towing-logo.jpg" width="75" height="45"> </a>
+            <a class="navbar-brand" href="/#top"> <img src="../images/azzi-towing-logo.jpg" width="100" height="60"> </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
@@ -47,8 +51,8 @@
     {% block content %}
     {% endblock %}
 
-    <div class="container-fluid text-center footer">
-        <p>Copyright © 2023 Azzi Towing LLC. All rights reserved. | Designed and developed by Azzi Towing LLC.</p>
+    <div class="container-fluid text-center footer" style="border: 1px solid white;">
+        <p style="font-family: 'Helvetica', cursive;">Copyright © 2023 Azzi Towing LLC. All rights reserved. | Designed and developed by Azzi Towing LLC.</p>
             <nav class="footer-contact-links">
 
             <ul class="footer-contact-list">
@@ -67,11 +71,11 @@
             </a></li>
 
             </ul></nav>
-            <nav class="nav-footer">
+            <nav class="nav-footer" >
                 <ul class="nav-list">
                     <li><a class="nav-link" href="/#services">Services</a></li>
                     <li><a class="nav-link" href="/#service-areas">Service Areas</a></li>
-                    <li><a class="nav-link" href="/#about">About us</a></li>
+                    <li><a class="nav-link" href="/#about">About Us</a></li>
                     <li><a class="nav-link" href="/#contact">Contact</a></li>
                     <li><a class="nav-link" href="/schedule">Schedule Service</a></li>
                     <li><a class="nav-link" href="/joeazzi">Temp Admin Link</a></li>

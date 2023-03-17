@@ -3,7 +3,7 @@ import os
 from os import environ
 from os.path import exists
 from sqlite3 import connect
-#from init_db import init_db, db_connect
+from init_db import init_db, db_connect
 import stripe
 from math import ceil
 import datetime
@@ -80,8 +80,85 @@ Hi, {}! Thanks for choosing Azzi Towing. Please use the link below to pay your i
 Thank you!
 """.format(first_name, link)
 
+def replace_heroku_database_url(url):
+    return url.replace('postgres://', 'postgresql+psycopg2://')
+
+
+def generate_time_selections():
+    times = []
+    for hour in range(0, 23, 2):
+        if hour < 12:
+            if hour == 0:
+                times.append('12:00AM - 2:00AM')
+            elif hour == 10:
+                times.append('{}:00AM - {}:00PM'.format(hour%12, hour%12+2))
+            else:
+                times.append('{}:00AM - {}:00AM'.format(hour%12, hour%12+2))
+        else:
+            if hour == 12:
+                times.append('12:00PM - 2:00PM')
+            elif hour == 22:
+                times.append('{}:00PM - 11:59PM'.format(hour%12))
+            else:
+                times.append('{}:00PM - {}:00PM'.format(hour%12, hour%12+2))
+    return times
+
+def generate_time_selections():
+    times = []
+    for hour in range(0, 23, 2):
+        if hour < 12:
+            if hour == 0:
+                times.append('12:00AM - 2:00AM')
+            elif hour == 10:
+                times.append('{}:00AM - {}:00PM'.format(hour%12, hour%12+2))
+            else:
+                times.append('{}:00AM - {}:00AM'.format(hour%12, hour%12+2))
+        else:
+            if hour == 12:
+                times.append('12:00PM - 2:00PM')
+            elif hour == 22:
+                times.append('{}:00PM - 11:59PM'.format(hour%12))
+            else:
+                times.append('{}:00PM - {}:00PM'.format(hour%12, hour%12+2))
+    return times
+
+
+def get_available_time_slots(date):
+    print(date)
+    all_slots = generate_time_selections()
+    available_slots = []
+
+    # Connect to Database
+    if not prod:
+        conn = connect(DB)
+    else:
+        conn = db_connect()
+    
+    cur = conn.cursor()
+    cur.execute("SELECT time FROM service WHERE date={}".format(param_query_symbol), (date,))
+    taken_times = cur.fetchall()
+
+    conn.commit()
+    conn.close()
+
+    for slot in all_slots:
+        slot_taken = False
+        for taken_time in taken_times:
+            if slot in taken_time:
+                slot_taken = True
+                continue
+        if not slot_taken:
+            available_slots.append(slot)
+
+    return available_slots
 
 if __name__ == '__main__':
     #proper_payment_link_generation()
     #send_text()
-    send_payment_link('http://google.com', 'jamesbeegen@gmail.com', 'James')
+    #send_payment_link('http://google.com', 'jamesbeegen@gmail.com', 'James')
+    # heroku_url = 'postgres://ukcuivpnhjuepm:72d2e70507a80420168396ce6cfc3a0596d30e3ee4e8d4a5af70814f431ca001@ec2-3-229-161-70.compute-1.amazonaws.com:5432/d7d24rcph51e21'
+    # new_heroku_url = replace_heroku_database_url(heroku_url)
+    # print(new_heroku_url)
+    times = get_available_time_slots('2023-03-15')
+    print(times)
+    #for time in times: print(time)
