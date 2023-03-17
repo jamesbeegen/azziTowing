@@ -39,7 +39,20 @@
                 </div>
                 <div class="col-sm">
                     <label for="serviceDate" class="form-label mt-2">Service Date</label>
-                    <input type="date" class="form-control" name="date" value="{{ request.form['date'] }}" placeholder="{{ service[2] }}">
+                    <input type="text" onfocus="(this.type='date')" onblur="checkIfChanged()" id="date" class="form-control" name="date" value="{{ request.form['date'] }}" placeholder="{{ service[2] }}" disabled>
+                    <script>
+                        var rawDate = "{{ service[2] }}";
+                        var dateParts = rawDate.split('-');
+                        var date = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]); 
+                        document.getElementById("date").placeholder = date.toLocaleDateString("en-US");
+
+                        function checkIfChanged() {
+                            var orig_date = "{{ service[2] }}";
+                            if(document.getElementById("date").textContent === "{{ service[2] }}"){
+                                document.getElementById("date").type = 'text';                           
+                            }
+                        }                        
+                    </script>
                 </div>
             </div>
             <div class="row justify-content-center">
