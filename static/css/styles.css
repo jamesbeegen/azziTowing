@@ -147,6 +147,8 @@ ul li{
   .nav-link {
     margin: 0 10px;
     margin-bottom:3px;
+    min-width:130px;
+    font-size: 20px;
   }
 
   .nav-link:hover{
