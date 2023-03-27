@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
-    <!-- First divider/area-->
+    <!-- First divider/area -->
     <div class="container-fluid" id="top" style="min-height:100vh">
         <div class="row align-items-center" style="min-height: 700px">
             <div class="col">
@@ -12,6 +12,7 @@
         </div>
     </div>
 
+    <!-- SERVICES -->
     <div class="container-fluid" id="services" style="min-height: 50vh;">
         <div class="row list-row"style="padding:30px;">
             <h1 class="text-center" style="font-family: 'Staatliches'; font-size: 60px">Services</h1>
@@ -36,64 +37,63 @@
         </div>
     </div>
 
-    <div class="container-fluid text-center" id="service-areas" style="min-height:70vh;">
-        <div class="row justify-content-center list-row" style="padding:60px;">
+    <!-- SERVICE AREAS -->
+    <div class="container-fluid" id="service-areas" style="min-height:70vh;">
+        <div class="row justify-content-center list-row" style="padding-top:60px;">
             <h1 class="text-center" style="font-family: 'Staatliches'; font-size: 60px">Service Areas</h1>
         </div>
-        <div class="row justify-content-center list-row">
-            <div class="col"><p class="list-main"><b>Sterling</b></p></div>
-            <div class="col"><p class="list-main"><b>Herndon</b></p></div>
+        <div class="mx-auto mt-4" style="max-width: 1100px;" id="before-about-us">
+            <p style="font-family: 'Helvetica'; font-size: 25px">All of our services are available in <b>Northern Virginia</b>. This list is not "all-inclusive". When in doubt, put in a service request with the link above!</p>
         </div>
-        <div class="row justify-content-center list-row">
-            <div class="col"><p class="list-main"><b>Ashburn</b></p></div>
-            <div class="col"><p class="list-main"><b>Dulles</b></p></div>
-        </div> 
-        <div class="row justify-content-center list-row"> 
-            <div class="col"><p class="list-main"><b>Leesburg</b></p></div>
-            <div class="col"><p class="list-main"><b>Chantily</b></p></div>     
-        </div>
-        <div class="row justify-content-center list-row"> 
-            <div class="col"><p class="list-main"><b>Vienna</b></p></div>
-            <div class="col"><p class="list-main"><b>Tysons</b></p></div>     
-        </div>
-        <div class="row justify-content-center list-row"> 
-            <div class="col"><p class="list-main"><b>Reston</b></p></div>
-            <div class="col"><p class="list-main"><b>More!</b></p></div>     
-        </div>
+            <div class="row justify-content-center">
+                <div class="mx-auto" style="max-width: 1100px;">
+                    <ul style="font-family: 'Helvetica'; font-size: 22px" class="mt-3">
+                        <li>Sterling</li>
+                        <li>Herndon</li>
+                        <li>Ashburn</li>
+                        <li>Dulles</li>
+                        <li>Leesburg</li>
+                        <li>Chantilly</li>
+                        <li>Vienna</li>
+                        <li>Tysons</li>
+                        <li>Reston</li>
+                        <li>More</li>
+                    </ul>
+                </div>
+            </div>
         <br/>
-        <div class="row justify-content-center list-row" id="before-about-us">
-            <p style="font-family: 'Urbanist'; font-size: 25px" class="mt-2">All of our services are available in <b>Northern Virginia</b>. This list is not "all-inclusive". When in doubt, put in a service request with the link above!</p>
-        </div>
-        <br>
-    </div>             
+    </div>     
+    
+    <!-- ABOUT US -->
     <div class="container-fluid" id="about-us"style="min-height:50vh;">
         <div class="row">
             <h1 class="text-center mt-4 mb-4" style="font-family: 'Staatliches'; font-size: 60px">About Us</h1>
                 <br/>
             <div class="col">
-                <!-- <img class="img-fluid mb-4" src="../images/tow-truck2.jpg" style="max-height: 400px; max-width: 500px; float:left"> -->
+                <img class="rounded mx-auto d-block" src="../images/joe-portrait.png"> 
             </div>
-            <div class="col-10">
+        </div>
+        <div class="row mt-5">
+            <div class="mx-auto mb-5" style="max-width: 1100px;">
                 <p class="text-aboutus" > At Azzi Towing LLC, we are a locally owned and operated tow truck company dedicated to providing reliable and professional towing services to our community. Our founder and owner, Joe Azzi, has been in the towing industry for <b>(X)</b> years and established Azzi Towing LLC in the Summer of 2022.</p>
                 <p class="text-aboutus"> We understand that being stranded on the side of the road can be a stressful experience, which is why we make it our priority to arrive promptly and provide efficient and friendly service. We offer a wide range of towing services, including emergency roadside assistance, long-distance towing, heavy-duty towing, and more. Our goal is to make sure that you and your vehicle are taken care of, no matter the situation. </p>
                 <p class="text-aboutus"> At Azzi Towing LLC, we pride ourselves on our commitment to customer satisfaction. We believe in building long-term relationships with our clients, and we go above and beyond to ensure that every customer is happy with the service they receive. We are always happy to answer any questions you may have and to provide you with the information you need to make informed decisions about your towing and roadside assistance needs. We look forward to serving you soon!</p>
             </div>
-            <div class="col"></div>
         </div>
     </div>
 
+    <!-- CONTACT US -->
     <div class="container-fluid mt-5 mb-3" id="contact" style= "min-height: 45vh;">
         <h1 class="text-center" style="font-family: 'Staatliches'; font-size: 60px">Contact Us Today</h1>
         <div class="row mt-3">
             <div class="col"></div>
-            <div class="col-10">
+            <div class="mx-auto" style="max-width: 1100px;">
                 <p class="text-contactus"> Contact us today to experience our top-notch service and customer support. You can reach us by phone, email, or through our Facebook page. We are available to provide you with the support you need, when you need it. Don't hesitate to reach out to us - we are always happy to help!</p>
             </div>
             <div class="col"></div>
         </div>
-        <div class="row mt-3 text-center">
-            <div class="col">
-
+        <div class="row mt-3">
+            <div class="mx-auto" style="max-width: 1100px;">
                 <p style="font-family: 'Urbanist'; font-size: 20px"> <i style="font-size:24px" class="fa">&#xf095;</i> Phone: 571-992-6032 </p>
                 <p style="font-family: 'Urbanist'; font-size: 20px"> <i style="font-size:24px" class="fa">&#xf0e0;</i> Email: <a href="mailto:azzitowing@gmail.com"> azzitowing@gmail.com </a></p>
                 <p style="font-family: 'Urbanist'; font-size: 20px"> <i style="font-size:24px" class="fa">&#xf09a;</i> Follow us on <a href="https://www.facebook.com/profile.php?id=100087916009786" target="_blank">Facebook!</a> </p>
