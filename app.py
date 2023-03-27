@@ -367,7 +367,7 @@ def reset_password_view():
         if form.email.data == os.environ['admin_email']:
             temp_password = "".join(random.choices(string.ascii_letters + string.digits, k=15))
             set_user_password(str(temp_password))
-            send_temp_password(admin_email=admin_email, password=str(temp_password))
+            send_temp_password(password=str(temp_password))
         return render_template('reset-email-sent.html')
     return render_template("password-reset.html", form=form, text="Enter email address", btn_action="Submit")
 
@@ -472,7 +472,6 @@ def schedule_view():
 
             # Send email and text to the customer
             send_request_recieved_email(
-                admin_email=admin_email,
                 client_email=request.form['email'],
                 name=request.form['first_name'],
                 service_type=request.form['service_type'],
@@ -550,7 +549,6 @@ def view_service_request():
         
         # Send the confirmation email to the customer
         send_service_confirmation_email(
-            admin_email=admin_email, 
             client_email=service[0], 
             name=service[4],
             service_type=service[1],
@@ -922,7 +920,7 @@ def send_payment_link():
     # to="+1{}".format(service[0])
     # )
 
-    send_payment_link_via_email(admin_email, service[1], service[3], service[2])
+    send_payment_link_via_email(service[1], service[3], service[2])
     
     return redirect('/joeazzi/service?ticket={}&sent=true'.format(ticket_num))
 
@@ -955,7 +953,9 @@ def success():
 def cancel():
     return render_template('payment_cancel.html')
 
-
+@app.route('/privacy')
+def privacy_policy():
+    return render_template('privacy.html')
 # Main calling function
 if __name__ == '__main__':
     if not exists(DB) or prod:

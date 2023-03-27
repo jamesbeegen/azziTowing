@@ -1,81 +1,25 @@
 from __future__ import print_function
 import os.path
-from google.auth.transport.requests import Request
-from google.oauth2.credentials import Credentials
-from google_auth_oauthlib.flow import InstalledAppFlow
-from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
-import base64
+import smtplib, ssl
 from email.message import EmailMessage
-from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
+from dotenv import load_dotenv
 
-# If modifying these scopes, delete the file token.json.
-SCOPES = [
-    'https://www.googleapis.com/auth/gmail.readonly',
-    'https://www.googleapis.com/auth/gmail.send'
-]
+try:
+    load_dotenv()
+except:
+    pass
 
-
-# Used for creating initial token.json to be stored in heroku ENV variable
-def auth():
-    """Shows basic usage of the Gmail API.
-    Lists the user's Gmail labels.
-    """
-    creds = None
-    # The file token.json stores the user's access and refresh tokens, and is
-    # created automatically when the authorization flow completes for the first
-    # time.
-    if os.path.exists('token.json'):
-        creds = Credentials.from_authorized_user_file('token.json', SCOPES)
-    # If there are no (valid) credentials available, let the user log in.
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
-            flow = InstalledAppFlow.from_client_secrets_file(
-                'credentials.json', SCOPES)
-            creds = flow.run_local_server(port=0)
-        # Save the credentials for the next run
-        with open('token.json', 'w') as token:
-            token.write(creds.to_json())
-
-    try:
-        # Call the Gmail API
-        service = build('gmail', 'v1', credentials=creds)
-        results = service.users().labels().list(userId='me').execute()
-        labels = results.get('labels', [])
-
-        if not labels:
-            print('No labels found.')
-            return
-        print('Labels:')
-        for label in labels:
-            print(label['name'])
-
-    except HttpError as error:
-        # TODO(developer) - Handle errors from gmail API.
-        print(f'An error occurred: {error}')
+# CONFIG VARIABLES
+PORT = 465  # For SSL
+SERVER = "smtp.gmail.com"
+SENDER = os.environ['admin_email']  # Enter your address
+PASSWORD = os.environ['admin_email_password']
 
 
 # Send payment link to client
-def send_payment_link_via_email(admin_email, client_email, name, link):
-    if os.path.exists('token.json'):
-        creds = Credentials.from_authorized_user_file('token.json', SCOPES)
-    else:
-        try:
-            token_json = os.environ['gmail_token']
-            with open('token.json', 'w') as f:
-                f.write(token_json)
-            creds = Credentials.from_authorized_user_file('token.json', SCOPES)
-        except:
-            pass
-
-    try:
-        service = build('gmail', 'v1', credentials=creds)
-        message = EmailMessage()
-        message.add_header('Content-Type','text/html')
-        message.set_payload("""
+def send_payment_link_via_email(client_email, name, link):
+    msg = EmailMessage()
+    msg.set_content("""
 <p>Hi, {}! Thanks for choosing Azzi Towing. Please use the link below to pay for your service.</p>
 <br>
 <a href="{}">Click here to pay</a>
@@ -87,140 +31,61 @@ Joe Azzi
 <br>
 Owner,
 <br>
-Azzi Towing LLC""".format(name, link))
+Azzi Towing LLC""".format(name, link), 'html')
+    msg['Subject'] = 'Azzi Towing: Invoice'
+    msg['From'] = SENDER
+    msg['To'] = client_email
+    context = ssl.create_default_context()
 
-        message['To'] = client_email
-        message['From'] = admin_email
-        message['Subject'] = 'Azzi Towing: Invoice'
+    with smtplib.SMTP_SSL(SERVER, PORT, context=context) as server:
+        server.login(SENDER, PASSWORD)
+        server.send_message(msg, from_addr=SENDER, to_addrs=client_email)
 
-        # encoded message
-        encoded_message = base64.urlsafe_b64encode(message.as_bytes()).decode()
 
-        create_message = {
-            'raw': encoded_message
-        }
-
-        # pylint: disable=E1101
-        send_message = (service.users().messages().send
-                        (userId="me", body=create_message).execute())
-        print(F'Message Id: {send_message["id"]}')
-
-    except HttpError as error:
-        print(F'An error occurred: {error}')
-        send_message = None
-
-    return send_message
-
-def send_temp_password(admin_email, password):
-    if os.path.exists('token.json'):
-        creds = Credentials.from_authorized_user_file('token.json', SCOPES)
-    else:
-        try:
-            token_json = os.environ['gmail_token']
-            with open('token.json', 'w') as f:
-                f.write(token_json)
-            creds = Credentials.from_authorized_user_file('token.json', SCOPES)
-        except:
-            pass
-
-    try:
-        service = build('gmail', 'v1', credentials=creds)
-        message = EmailMessage()
-        message.add_header('Content-Type','text/html')
-        message.set_payload("""
+# Sends temporary password to the admin email - password reset/change
+def send_temp_password(password):
+    msg = EmailMessage()
+    msg.set_content("""
 <p>Temporary login password:</p>
 <br>
 <p>{}</p>
 <br>
-<p>You can change your password to a permanent password after logging in with the temporary password</p>""".format(password))
+<p>You can change your password to a permanent password after logging in with the temporary password</p>""".format(password), 'html')
+    msg['Subject'] = 'Temporary Password'
+    msg['From'] = SENDER
+    msg['To'] = SENDER
+    context = ssl.create_default_context()
 
-        message['To'] = admin_email
-        message['From'] = admin_email
-        message['Subject'] = 'Azzi Towing: Temporary Password'
+    with smtplib.SMTP_SSL(SERVER, PORT, context=context) as server:
+        server.login(SENDER, PASSWORD)
+        server.send_message(msg, from_addr=SENDER, to_addrs=SENDER)
 
-        # encoded message
-        encoded_message = base64.urlsafe_b64encode(message.as_bytes()).decode()
 
-        create_message = {
-            'raw': encoded_message
-        }
-
-        # pylint: disable=E1101
-        send_message = (service.users().messages().send
-                        (userId="me", body=create_message).execute())
-        print(F'Message Id: {send_message["id"]}')
-
-    except HttpError as error:
-        print(F'An error occurred: {error}')
-        send_message = None
-
-    return send_message
-
-def send_request_recieved_email(admin_email, client_email, name, date, service_type, time_window):
-    if os.path.exists('token.json'):
-        creds = Credentials.from_authorized_user_file('token.json', SCOPES)
-    else:
-        try:
-            token_json = os.environ['gmail_token']
-            with open('token.json', 'w') as f:
-                f.write(token_json)
-            creds = Credentials.from_authorized_user_file('token.json', SCOPES)
-        except:
-            pass
-
-    try:
-        service = build('gmail', 'v1', credentials=creds)
-        message = EmailMessage()
-        message.add_header('Content-Type','text/html')
-        message.set_payload("""
+# Sends an email after a customer schedules a service through the web form
+def send_request_recieved_email(client_email, name, date, service_type, time_window):
+    msg = EmailMessage()
+    msg.set_content("""
 <p>{}, we have received your service request.</p>
 <h4>Service request details:</h4>
 <p style="font-weight: bold;">Type: <span style="font-weight: normal;">{}</span></p>
 <p style="font-weight: bold;">Date: <span style="font-weight: normal;">{}</span></p>
 <p style="font-weight: bold;">Time: <span style="font-weight: normal;">{}</span></p>
 <br>
-<p> We will send another email when the service is confirmed. Thank you!</p>""".format(name, service_type, date, time_window))
+<p> We will send another email when the service is confirmed. Thank you!</p>""".format(name, service_type, date, time_window), 'html')
+    msg['Subject'] = 'Your Service Request Has Been Received'
+    msg['From'] = SENDER
+    msg['To'] = client_email
+    context = ssl.create_default_context()
 
-        message['To'] = client_email
-        message['From'] = admin_email
-        message['Subject'] = 'Your Service Request Has Been Received'
-
-        # encoded message
-        encoded_message = base64.urlsafe_b64encode(message.as_bytes()).decode()
-
-        create_message = {
-            'raw': encoded_message
-        }
-
-        # pylint: disable=E1101
-        send_message = (service.users().messages().send
-                        (userId="me", body=create_message).execute())
-        print(F'Message Id: {send_message["id"]}')
-
-    except HttpError as error:
-        print(F'An error occurred: {error}')
-        send_message = None
-
-    return send_message
+    with smtplib.SMTP_SSL(SERVER, PORT, context=context) as server:
+        server.login(SENDER, PASSWORD)
+        server.send_message(msg, from_addr=SENDER, to_addrs=client_email)
 
 
-def send_service_confirmation_email(admin_email, client_email, name, date, service_type, time_window):
-    if os.path.exists('token.json'):
-        creds = Credentials.from_authorized_user_file('token.json', SCOPES)
-    else:
-        try:
-            token_json = os.environ['gmail_token']
-            with open('token.json', 'w') as f:
-                f.write(token_json)
-            creds = Credentials.from_authorized_user_file('token.json', SCOPES)
-        except:
-            pass
-
-    try:
-        service = build('gmail', 'v1', credentials=creds)
-        message = EmailMessage()
-        message.add_header('Content-Type','text/html')
-        message.set_payload("""
+# Sends a confirmation after service approval
+def send_service_confirmation_email(client_email, name, date, service_type, time_window):
+    msg = EmailMessage()
+    msg.set_content("""
 <p>{}, your service has been approved and confirmed.</p>
 <br>
 <h3>Confirmed service details:</h3>
@@ -228,30 +93,12 @@ def send_service_confirmation_email(admin_email, client_email, name, date, servi
 <p style="font-weight: bold;">Date: <span style="font-weight: normal;">{}</span></p>
 <p style="font-weight: bold;">Time: <span style="font-weight: normal;">{}</span></p>
 <br>
-<p>We look forward to seeing you!</p>""".format(name, service_type, date, time_window))
+<p>We look forward to seeing you!</p>""".format(name, service_type, date, time_window), 'html')
+    msg['Subject'] = 'Service Confirmation'
+    msg['From'] = SENDER
+    msg['To'] = client_email
+    context = ssl.create_default_context()
 
-        message['To'] = client_email
-        message['From'] = admin_email
-        message['Subject'] = 'Service Confirmation'
-
-        # encoded message
-        encoded_message = base64.urlsafe_b64encode(message.as_bytes()).decode()
-
-        create_message = {
-            'raw': encoded_message
-        }
-
-        # pylint: disable=E1101
-        send_message = (service.users().messages().send
-                        (userId="me", body=create_message).execute())
-        print(F'Message Id: {send_message["id"]}')
-
-    except HttpError as error:
-        print(F'An error occurred: {error}')
-        send_message = None
-
-    return send_message
-
-if __name__ == '__main__':
-    auth()
-    #send_payment_link_via_email()
+    with smtplib.SMTP_SSL(SERVER, PORT, context=context) as server:
+        server.login(SENDER, PASSWORD)
+        server.send_message(msg, from_addr=SENDER, to_addrs=client_email)

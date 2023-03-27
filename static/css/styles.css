@@ -71,7 +71,10 @@ ul li{
 }
 
 #about-us {
-    background-color: #474E68 !important;
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)), url('../images/tow-truck2.jpg') !important;
+    background-size: cover !important;                      /* <------ */
+    background-repeat: no-repeat !important;
+    background-position: center center !important;
     color: aliceblue;
     box-shadow: 0 2px 4px 0 rgba(0,0,0,.5) !important;
     font-family: 'Helvetica', cursive;
@@ -184,13 +187,10 @@ ul li{
   .text-aboutus {
     font-family: 'Helvetica', cursive;
     font-size: 18px; 
-    float: 'right';
-    padding-right: 5%;
+    float: right;
   }
 
   .text-contactus {
     font-family: 'Helvetica', cursive;
     font-size: 20px;
-    padding-left: 8%;
-    padding-right: 8%
   }
