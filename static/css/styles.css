@@ -71,7 +71,10 @@ ul li{
 }
 
 #about-us {
-    background-color: #474E68 !important;
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)), url('../images/tow-truck2.jpg') !important;
+    background-size: cover !important;                      /* <------ */
+    background-repeat: no-repeat !important;
+    background-position: center center !important;
     color: aliceblue;
     box-shadow: 0 2px 4px 0 rgba(0,0,0,.5) !important;
     font-family: 'Helvetica', cursive;
@@ -144,6 +147,8 @@ ul li{
   .nav-link {
     margin: 0 10px;
     margin-bottom:3px;
+    min-width:130px;
+    font-size: 20px;
   }
 
   .nav-link:hover{
@@ -183,14 +188,128 @@ ul li{
 
   .text-aboutus {
     font-family: 'Helvetica', cursive;
-    font-size: 18px; 
-    float: 'right';
-    padding-right: 5%;
+    font-size: 20px; 
+    float: right;
   }
 
   .text-contactus {
     font-family: 'Helvetica', cursive;
     font-size: 20px;
-    padding-left: 8%;
-    padding-right: 8%
   }
+
+  @-webkit-keyframes slideInLeft {
+    0% {
+      transform: translateX(-900px);
+      opacity: 0;
+    }
+    100% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  @-moz-keyframes slideInLeft {
+    0% {
+      transform: translateX(-900px);
+      opacity: 0;
+    }
+    100% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideInLeft {
+    0% {
+      transform: translateX(-900px);
+      opacity: 0;
+    }
+    100% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+.slide-in-left {
+  -webkit-animation: slideInLeft 1.5s forwards;
+  -moz-animation: slideInLeft 1.5s forwards;
+  animation: slideInLeft 1.5s forwards;
+}
+
+
+@-webkit-keyframes slideInRight {
+  0% {
+    transform: translateX(1800px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@-moz-keyframes slideInRight {
+  0% {
+    transform: translateX(1800px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInRight {
+  0% {
+    transform: translateX(1800px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+
+.slide-in-right {
+  -webkit-animation: slideInRight 1.5s forwards;
+  -moz-animation: slideInRight 1.5s forwards;
+  animation: slideInRight 1.5s forwards;
+}
+
+
+@-moz-keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@-webkit-keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+.fade-in {
+  -webkit-animation: fadeIn 2s;
+  -moz-animation: fadeIn 2s;
+  animation: fadeIn 2s
+}
+
+#service-areas-list {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+#service-areas-list li {
+  float: left;
+  display: block;
+  text-align: center;
+  padding: 16px;
+  text-decoration: none;
+}
