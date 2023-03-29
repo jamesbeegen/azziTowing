@@ -41,7 +41,7 @@
 
                     <div class="form-group mb-3">
                         <label for="lastName">Last Name</label>
-                        {{ form.last_name(class_="form-control",placeholder="Last_name")}}
+                        {{ form.last_name(class_="form-control",placeholder="Last Name")}}
                     </div>
                     {% for error in form.last_name.errors %}
                     <div class="alert alert-warning alert-dismissible fade show" role="alert">
@@ -84,7 +84,7 @@
                     {% endfor%}
 
                     <div class="form-group mb-3">
-                        <label for="date">Date of Service &nbsp;<span><a href="/schedule"> Change </a></span></label>
+                        <label for="date">Date of Service &nbsp;<span><a href="/schedule">Change</a></span></label>
                         {{ form.date(class_="form-control", placeholder=selected_date, readonly="readonly", value=selected_date) }}
                         <!--<input class="form-control" type="text" id="date" name="date" value="{{ selected_date }}" disabled />-->
                     </div>
