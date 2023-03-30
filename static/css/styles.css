@@ -317,11 +317,3 @@ ul li{
 .col-md-12 {
   max-width: 200px !important;
 }
-
-hr {
-  clear:both;
-  display:block;
-  width: 96%;               
-  background-color:#FFFF00;
-  height: 1px;
-}

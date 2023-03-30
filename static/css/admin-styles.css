@@ -82,3 +82,16 @@ tbody, td, tfoot, th, thead, tr {
     border-width: 0;
     font-family: 'Helvetica', cursive;
 }
+
+hr {
+    margin-top: 70px;
+    margin-bottom: 50px;
+    display:block;
+    width: 100%;               
+    background-color: grey;
+    height: 10px;
+}
+
+h1 {
+    font-size: 40px;
+}

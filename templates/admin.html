@@ -10,7 +10,8 @@
             Service added to schedule
             </div>
         {% endif %}
-        <h1 class="text-center mt-3">Overdue</h1>  
+        <hr style="margin-top:20px;">
+        <h1 class="text-center mt-3 mb-5">Overdue</h1>  
         <div class="table-responsive">
             <table id="overdue" class="table table-danger table-hover">
                 <thead>
@@ -37,7 +38,8 @@
                 </tbody>
             </table>
         </div>
-        <h1 class="text-center mt-5">Today {{ today }}</h1>  
+        <hr>
+        <h1 class="text-center mt-5 mb-5">Today {{ today }}</h1>  
         <div class="table-responsive">
             <table id="today" class="table table-warning table-hover">
                 <thead>
@@ -64,7 +66,8 @@
                 </tbody>
             </table>
         </div>
-        <h1 class="text-center mt-5">Upcoming</h1>
+        <hr>
+        <h1 class="text-center mt-5 mb-5">Upcoming</h1>
         <div class="table-responsive">
             <table id="upcoming" class="table table-primary table-hover">
                 <thead>
@@ -90,8 +93,9 @@
                 {% endfor %}
                 </tbody>
             </table>
-        </div>   
-        <h1 class="text-center mt-5">Completed</h1>
+        </div>
+        <hr>
+        <h1 class="text-center mt-5 mb-5">Completed</h1>
         <div class="table-responsive mb-5">
             <table id="completed" class="table table-success table-hover">
                 <thead>
@@ -117,7 +121,8 @@
                 {% endfor %}
                 </tbody>
             </table>
-        </div>    
+        </div>
+        <hr>
     </div>
     
     
