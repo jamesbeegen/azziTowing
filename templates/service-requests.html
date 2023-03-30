@@ -1,5 +1,6 @@
 {% extends 'base-admin.html' %}
 {% block stylesheet %}
+<link href="../css/datatables.min.css" rel="stylesheet"/>
 <link rel="stylesheet" href="../css/admin-styles.css">
 {% endblock %}
 {% block content %}
@@ -7,7 +8,7 @@
         <div class="row justify-content-center">
             <h1 class="text-center mt-3">Service Requests</h1>  
             <div class="table-responsive">
-                <table class="table table-primary table-hover">
+                <table id="requests" class="table table-primary table-hover">
                     <thead>
                         <tr>
                             <th></th>
