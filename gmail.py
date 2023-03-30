@@ -102,3 +102,29 @@ def send_service_confirmation_email(client_email, name, date, service_type, time
     with smtplib.SMTP_SSL(SERVER, PORT, context=context) as server:
         server.login(SENDER, PASSWORD)
         server.send_message(msg, from_addr=SENDER, to_addrs=client_email)
+
+
+def notify_new_service_request_email(first_name, last_name, email, phone_number, service_type, service_date, service_time):
+    msg = EmailMessage()
+    msg.set_content("""
+<p>A new {0} service request has been submitted through the website.:</p>
+<br>
+<h3>Service Details</h3>
+<p style="font-weight: bold;">Type: <span style="font-weight: normal;">{0}</span></p>
+<p style="font-weight: bold;">Date: <span style="font-weight: normal;">{1}</span></p>
+<p style="font-weight: bold;">Time: <span style="font-weight: normal;">{2}</span></p>
+<br>
+<h3>Customer Details</h3>
+<p style="font-weight: bold;">Name: <span style="font-weight: normal;">{3} {4}</span></p>
+<p style="font-weight: bold;">Email: <span style="font-weight: normal;">{5}</span></p>
+<p style="font-weight: bold;">Phone: <span style="font-weight: normal;">{6}</span></p>
+<br>
+<a href="https://azzitowing.herokuapp.com/joeazzi/service-requests"><h3>View Service Requests</h3></a>""".format(service_type, service_date, service_time, first_name, last_name, email, phone_number), 'html')
+    msg['Subject'] = 'New Service Request Submitted'
+    msg['From'] = SENDER
+    msg['To'] = SENDER
+    context = ssl.create_default_context()
+
+    with smtplib.SMTP_SSL(SERVER, PORT, context=context) as server:
+        server.login(SENDER, PASSWORD)
+        server.send_message(msg, from_addr=SENDER, to_addrs=SENDER)

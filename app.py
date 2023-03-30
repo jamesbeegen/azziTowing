@@ -66,7 +66,7 @@ from sqlite3 import connect
 from sqlalchemy import create_engine
 from init_db import init_db, db_connect
 from math import ceil
-from gmail import send_payment_link_via_email, send_temp_password, send_request_recieved_email, send_service_confirmation_email
+from gmail import send_payment_link_via_email, send_temp_password, send_request_recieved_email, send_service_confirmation_email, notify_new_service_request_email
 from twilio.rest import Client
 from twilio.jwt.access_token import AccessToken
 from twilio.jwt.access_token.grants import ChatGrant
@@ -262,7 +262,7 @@ def get_available_time_slots(date):
 app.jinja_env.globals.update(get_available_time_slots=get_available_time_slots)
 
 
-def notify_new_service_request():
+def notify_new_service_request_text():
     pass
     # Twilio client
     # client = Client(account_sid, auth_token)
@@ -468,7 +468,9 @@ def schedule_view():
             conn.close()
             
             # Notify Joe via text of a new service request
-            notify_new_service_request()
+            #notify_new_service_request_text(request.form['first_name'], request.form['last_name'], request.form['email'], request.form['phone_number'], request.form['service_type'], request.form['service-date'])
+
+            notify_new_service_request_email(request.form['first_name'], request.form['last_name'], request.form['email'], request.form['phone_number'], request.form['service_type'], request.form['date'], request.form['time'])
 
             # Send email and text to the customer
             send_request_recieved_email(
