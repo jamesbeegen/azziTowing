@@ -352,6 +352,8 @@ def customer_export():
     cur = conn.cursor()
     cur.execute("SELECT * FROM customer;")
     customers = cur.fetchall()
+    conn.commit()
+    conn.close()
 
     with open('customers.csv', 'w') as f:
         writer = csv.writer(f)
