@@ -58,9 +58,10 @@ import random, string
 import stripe
 import datetime
 import psycopg2
+import csv
 from forms import login_form, schedule_form, date_schedule_form, forgot_password_form, change_password_form
 from datetime import timedelta
-from flask import Flask, render_template, request, url_for, redirect, flash, session
+from flask import Flask, render_template, request, url_for, redirect, flash, session, send_file
 from os.path import exists
 from sqlite3 import connect
 from sqlalchemy import create_engine
@@ -339,6 +340,26 @@ def customer_exists(customer_email):
     else:
         return False
 
+
+@app.route("/joeazzi/customers/export")
+def customer_export():
+    header = ['First Name', 'Last Name', 'Email', 'Phone']
+    if not prod:
+        conn = connect(DB)
+    else:
+        conn = db_connect()
+
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM customer;")
+    customers = cur.fetchall()
+
+    with open('customers.csv', 'w') as f:
+        writer = csv.writer(f)
+        writer.writerow(header)
+        for customer in customers:
+            writer.writerow([customer[1], customer[2], customer[0], customer[3]])
+    
+    return send_file('customers.csv')
 
 # Sets the user password to a new password
 def set_user_password(password):

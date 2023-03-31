@@ -8,7 +8,8 @@
 {% block content %}
 <div class="container">
     <div class="row justify-content-center">
-        <h1 class="text-center mt-3">Customer/Client List</h1>  
+        <h1 class="text-center mt-3">Customer/Client List</h1> 
+        
         <div class="table-responsive mt-3">
             <table id="customers" class="table table-primary table-hover">
                 <thead>
@@ -32,5 +33,7 @@
             </table>
         </div>
     </div>
+    <a href="/joeazzi/customers/export" style="text-decoration:none;"><span><h3 class="mt-5" style="color:aliceblue;">Export to Excel<span style="margin-left:20px;"><img style="height:80px;width:80px;"src="../images/excel.png"></span></h3></span></a>
+    
 </div>
 {% endblock %}
