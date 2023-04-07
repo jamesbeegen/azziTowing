@@ -6,6 +6,7 @@ from wtforms import (
     TimeField,
     SelectField,
     TelField,
+    TextAreaField
 
 )
 from flask_wtf import FlaskForm
@@ -27,6 +28,7 @@ class schedule_form(FlaskForm):
     service_type = SelectField('service_type', validators=[InputRequired()], choices=['Lockout Recovery', 'Fuel Delivery', 'Vehicle Transport', 'Battery Jump'])
     date = DateField('date', validators=[InputRequired()])
     time = SelectField('time', validators=[InputRequired()], choices=[])
+    notes = TextAreaField('notes')
         
 
 class date_schedule_form(FlaskForm):
