@@ -103,6 +103,17 @@
             </div>
             {% endfor %}
 
+            <div class="form-group mb-3">
+                <label style="color:black !important;" for="notes">Special Instructions</label>
+                {{ form.notes(class_="form-control", placeholder='Enter addresses for pickup and delivery, or any special instructions') }}
+            </div>
+            {% for error in form.notes.errors %}
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                {{ error }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+
             <div class="text-center">
                 <div class="d-grid gap-2 mt-2">
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#confirm-modal" onclick="modalizeForm();">Submit Request</button>
@@ -150,6 +161,7 @@
         var type = document.getElementById("service_type").value;
         var rawDate = document.getElementById("date").value;
         var time = document.getElementById("time").value;
+        var notes = document.getElementById("notes").value;
         var dateParts = rawDate.split('-');
         var date = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]); 
 
@@ -159,6 +171,7 @@
         document.getElementById("service-type-modal").textContent = type;
         document.getElementById("service-date-modal").textContent = date.toLocaleDateString("en-US");
         document.getElementById("time-modal").textContent = time;
+        document.getElementById("notes-modal").textContent = notes;
     }
 </script>
 {% endblock %}

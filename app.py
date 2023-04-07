@@ -485,7 +485,7 @@ def schedule_view():
                 cur.execute("INSERT INTO customer (first_name, last_name, email, phone) VALUES ({0},{0},{0},{0})".format(param_query_symbol), (request.form['first_name'], request.form['last_name'], request.form['email'], request.form['phone_number']))
 
             # Create the service in database
-            cur.execute("INSERT INTO service (service_type, date, time, completed, balance, paid, customer_email, approved) VALUES ({0},{0},{0},{0},{0},{0},{0},{0})".format(param_query_symbol), (request.form['service_type'], request.form['date'], request.form['time'], '0', '0.00', '0', request.form['email'], '0'))
+            cur.execute("INSERT INTO service (service_type, date, time, completed, balance, paid, customer_email, approved, notes) VALUES ({0},{0},{0},{0},{0},{0},{0},{0},{0})".format(param_query_symbol), (request.form['service_type'], request.form['date'], request.form['time'], '0', '0.00', '0', request.form['email'], '0', request.form['notes']))
             
             conn.commit()
             conn.close()
@@ -756,7 +756,7 @@ def create_service_ticket_view():
                 cur.execute("INSERT INTO customer (first_name, last_name, email, phone) VALUES ({0},{0},{0},{0})".format(param_query_symbol), (request.form['first_name'], request.form['last_name'], request.form['email'], request.form['phone_number']))
 
             # Create the service in database
-            cur.execute("INSERT INTO service (service_type, date, time, completed, balance, paid, customer_email, approved) VALUES ({0},{0},{0},{0},{0},{0},{0},{0})".format(param_query_symbol), (request.form['service_type'], request.form['date'], request.form['time'], '0', '0.00', '0', request.form['email'], '1'))
+            cur.execute("INSERT INTO service (service_type, date, time, completed, balance, paid, customer_email, approved, notes) VALUES ({0},{0},{0},{0},{0},{0},{0},{0},{0})".format(param_query_symbol), (request.form['service_type'], request.form['date'], request.form['time'], '0', '0.00', '0', request.form['email'], '1', request.form['notes']))
             
             conn.commit()
             conn.close()
