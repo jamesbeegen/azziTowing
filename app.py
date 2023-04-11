@@ -340,6 +340,36 @@ def customer_exists(customer_email):
     else:
         return False
 
+@app.route("/joeazzi/export")
+def services_export():
+    header = ['Type', 'Date', 'Time', 'Balance', 'Completed', 'Paid', 'First Name', 'Last Name', 'Phone', 'Email']
+    # Connect to database
+    if not prod:
+        conn = connect(DB)
+    else:
+        conn = db_connect()
+
+    cur = conn.cursor()
+
+    # Get information about services and the customer the service is for
+    cur.execute("SELECT service_id, service_type, date, time, balance, completed, paid, first_name, last_name, phone, email FROM service INNER JOIN customer on customer.email=service.customer_email")
+    services = cur.fetchall()
+    conn.commit()
+    conn.close()
+    with open('services.csv', 'w') as f:
+        writer = csv.writer(f)
+        writer.writerow(header)
+        for service in services:
+            if service[5] == 1:
+                completed = 'Yes'
+            else:
+                completed = 'No'
+            if service[6] == 1:
+                paid = 'Yes'
+            else:
+                paid = 'No'
+            writer.writerow([service[1], service[2], service[3], service[4], completed, paid, service[7], service[8], service[9], service[10]])
+    return send_file('services.csv')
 
 @app.route("/joeazzi/customers/export")
 def customer_export():
