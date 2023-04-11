@@ -909,7 +909,7 @@ def generate_payment_link():
     conn.commit()
     conn.close()
 
-    return redirect('/joeazzi/service?ticket={}'.format(ticket_num))
+    return redirect('/joeazzi/service?ticket={}&updated=true'.format(ticket_num))
 
 
 # Sends payment link via text
