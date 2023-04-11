@@ -25,7 +25,7 @@ class schedule_form(FlaskForm):
     last_name = StringField('last_name', validators=[InputRequired()])
     email = EmailField('email', validators=[InputRequired()])
     phone_number = TelField('phone_number', validators=[InputRequired()], id='phoneNumber')
-    service_type = SelectField('service_type', validators=[InputRequired()], choices=['Lockout Recovery', 'Fuel Delivery', 'Vehicle Transport', 'Battery Jump'])
+    service_type = SelectField('service_type', validators=[InputRequired()], choices=['Lockout Recovery', 'Fuel Delivery', 'Vehicle Transport', 'Battery Jump', 'Emergency Roadside Assistance'])
     date = DateField('date', validators=[InputRequired()])
     time = SelectField('time', validators=[InputRequired()], choices=[])
     notes = TextAreaField('notes')
